@@ -10,7 +10,7 @@ import { VideoPage } from "./video-page"
 import { DonationsPage } from "./donations-page"
 import { ProfilePage } from "./profile-page"
 import { ForumPage } from "./forum-page"
-import { AccessibilityPage1 } from "./accessibility-page-1"
+import { AccessibilityPage1, fontSizes } from "./accessibility-page-1"
 import { AccessibilityPage2 } from "./accessibility-page-2"
 
 const pageComponents: Record<string, React.ComponentType> = {
@@ -27,12 +27,32 @@ const pageComponents: Record<string, React.ComponentType> = {
 }
 
 export function AppShell() {
-  const { currentPage } = useApp()
+  const { currentPage, accessibility } = useApp()
 
   const PageComponent = pageComponents[currentPage] || HomePage
 
+  // Mapping color blindness to CSS filter values
+  const getColorBlindFilter = () => {
+    switch (accessibility.colorBlindMode) {
+      case "Protanopia": return "url(#protanopia)"
+      case "Protanomalia": return "url(#protanomalia)"
+      case "Deuteranopia": return "url(#deuteranopia)"
+      case "Deuteranomalia": return "url(#deuteranomalia)"
+      case "Tritanopia": return "url(#tritanopia)"
+      case "Tritanomalia": return "url(#tritanomalia)"
+      case "Acromatopsia": return "grayscale(100%)"
+      default: return "none"
+    }
+  }
+
   return (
-    <div className="min-h-screen bg-background flex flex-col">
+    <div 
+      className={`min-h-screen bg-background flex flex-col transition-all duration-300 ${accessibility.highContrast ? "high-contrast" : ""}`}
+      style={{ 
+        fontSize: `${fontSizes[accessibility.fontSizeIndex]}px`,
+        filter: getColorBlindFilter()
+      }}
+    >
       <Header />
       <Sidebar />
       <TutorialOverlay />
@@ -48,6 +68,30 @@ export function AppShell() {
           <div className="w-full h-1/3 bg-primary/30 rounded-full" />
         </div>
       </div>
+
+      {/* Color Blindness SVG Filters (Simulated) */}
+      <svg className="hidden" aria-hidden="true">
+        <defs>
+          <filter id="protanopia">
+            <feColorMatrix type="matrix" values="0.567, 0.433, 0, 0, 0 0.558, 0.442, 0, 0, 0 0, 0.242, 0.758, 0, 0 0, 0, 0, 1, 0" />
+          </filter>
+          <filter id="protanomalia">
+            <feColorMatrix type="matrix" values="0.817, 0.183, 0, 0, 0 0.333, 0.667, 0, 0, 0 0, 0.125, 0.875, 0, 0 0, 0, 0, 1, 0" />
+          </filter>
+          <filter id="deuteranopia">
+            <feColorMatrix type="matrix" values="0.625, 0.375, 0, 0, 0 0.7, 0.3, 0, 0, 0 0, 0.3, 0.7, 0, 0 0, 0, 0, 1, 0" />
+          </filter>
+          <filter id="deuteranomalia">
+            <feColorMatrix type="matrix" values="0.8, 0.2, 0, 0, 0 0.258, 0.742, 0, 0, 0 0, 0.142, 0.858, 0, 0 0, 0, 0, 1, 0" />
+          </filter>
+          <filter id="tritanopia">
+            <feColorMatrix type="matrix" values="0.95, 0.05, 0, 0, 0 0, 0.433, 0.567, 0, 0 0, 0.475, 0.525, 0, 0 0, 0, 0, 1, 0" />
+          </filter>
+          <filter id="tritanomalia">
+            <feColorMatrix type="matrix" values="0.967, 0.033, 0, 0, 0 0, 0.733, 0.267, 0, 0 0, 0.183, 0.817, 0, 0 0, 0, 0, 1, 0" />
+          </filter>
+        </defs>
+      </svg>
     </div>
   )
 }

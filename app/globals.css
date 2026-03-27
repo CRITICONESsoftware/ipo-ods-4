@@ -123,3 +123,23 @@
     @apply bg-background text-foreground;
   }
 }
+
+.high-contrast {
+  --background: #ffffff !important;
+  --foreground: #000000 !important;
+  --primary: #000000 !important;
+  --primary-foreground: #ffffff !important;
+  --card: #ffffff !important;
+  --card-foreground: #000000 !important;
+  --muted: #eeeeee !important;
+  --border: #000000 !important;
+  --accent: #000000 !important;
+}
+
+.high-contrast * {
+  border-color: #000000 !important;
+}
+
+.high-contrast input[type="radio"] {
+  accent-color: #000000 !important;
+}

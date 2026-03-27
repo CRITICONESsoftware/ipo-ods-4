@@ -2,7 +2,7 @@
 
 import { createContext, useContext, useState, type ReactNode } from "react"
 
-type Page =
+export type Page =
   | "home"
   | "quiz"
   | "quiz-result"
@@ -13,6 +13,15 @@ type Page =
   | "accessibility-1"
   | "accessibility-2"
   | "tutorial"
+
+export interface AccessibilitySettings {
+  fontSizeIndex: number
+  colorBlindMode: string
+  highContrast: boolean
+  contentReader: boolean
+  voiceNav: boolean
+  vibration: boolean
+}
 
 interface AppContextType {
   currentPage: Page
@@ -25,6 +34,8 @@ interface AppContextType {
   setShowTutorial: (show: boolean) => void
   profileTab: "info" | "notifications" | "progress"
   setProfileTab: (tab: "info" | "notifications" | "progress") => void
+  accessibility: AccessibilitySettings
+  setAccessibility: (settings: Partial<AccessibilitySettings>) => void
 }
 
 const AppContext = createContext<AppContextType | null>(null)
@@ -35,6 +46,19 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const [tutorialStep, setTutorialStep] = useState(0)
   const [showTutorial, setShowTutorial] = useState(true)
   const [profileTab, setProfileTab] = useState<"info" | "notifications" | "progress">("info")
+  
+  const [accessibility, setAccessibilityState] = useState<AccessibilitySettings>({
+    fontSizeIndex: 3,
+    colorBlindMode: "Ninguno",
+    highContrast: false,
+    contentReader: false,
+    voiceNav: false,
+    vibration: false,
+  })
+
+  const setAccessibility = (newSettings: Partial<AccessibilitySettings>) => {
+    setAccessibilityState(prev => ({ ...prev, ...newSettings }))
+  }
 
   return (
     <AppContext.Provider
@@ -49,6 +73,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
         setShowTutorial,
         profileTab,
         setProfileTab,
+        accessibility,
+        setAccessibility,
       }}
     >
       {children}

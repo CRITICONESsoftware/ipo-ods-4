@@ -20,10 +20,9 @@ export function Header() {
 
       <div className="flex items-center gap-1">
         <img
-          src="https://www.un.org/sustainabledevelopment/wp-content/uploads/2015/12/english_SDG_17goals_poster_all_languages_with_UN_emblem_1.png"
+          src="/icon.webp"
           alt="ODS Logo"
           className="w-8 h-8 rounded-full bg-primary-foreground"
-          crossOrigin="anonymous"
         />
         <h1 className="text-lg md:text-xl font-bold tracking-tight">
           <span className="text-primary-foreground">OBJETIV</span>

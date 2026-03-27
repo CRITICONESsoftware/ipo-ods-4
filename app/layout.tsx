@@ -9,6 +9,9 @@ const inter = Inter({ subsets: ["latin"], variable: "--font-inter" })
 export const metadata: Metadata = {
   title: 'ODS - Objetivos de Desarrollo Sostenible',
   description: 'Plataforma educativa sobre los Objetivos de Desarrollo Sostenible de las Naciones Unidas',
+  icons: {
+    icon: "/icon.webp",
+  },
 }
 
 export const viewport: Viewport = {

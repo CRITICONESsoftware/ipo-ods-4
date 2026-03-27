@@ -1,40 +1,183 @@
 "use client"
 
-import { Play, Volume2, Maximize2, Pause } from "lucide-react"
-import { useState, useRef } from "react"
+import { Play, Volume2, VolumeX, Maximize2, Pause } from "lucide-react"
+import { useState, useRef, useEffect, useCallback, MouseEvent } from "react"
+
+// Minimal inline types for the YouTube IFrame API so we don't need @types/youtube
+interface YTPlayer {
+  playVideo: () => void
+  pauseVideo: () => void
+  seekTo: (seconds: number, allowSeekAhead: boolean) => void
+  getCurrentTime: () => number
+  getDuration: () => number
+  setVolume: (volume: number) => void
+  getVolume: () => number
+  mute: () => void
+  unMute: () => void
+  isMuted: () => boolean
+  destroy: () => void
+}
+interface YTPlayerEvent {
+  target: YTPlayer
+  data: number
+}
+interface YTPlayerOptions {
+  videoId: string
+  playerVars?: Record<string, number | string>
+  events?: {
+    onReady?: (e: YTPlayerEvent) => void
+    onStateChange?: (e: YTPlayerEvent) => void
+  }
+}
+declare global {
+  interface Window {
+    YT: {
+      Player: new (elementId: string, options: YTPlayerOptions) => YTPlayer
+      PlayerState: { PLAYING: number; PAUSED: number; ENDED: number }
+    }
+    onYouTubeIframeAPIReady: () => void
+  }
+}
+
+const VIDEO_ID = "4WeJDw9eVQA"
 
 export function VideoPage() {
   const [isPlaying, setIsPlaying] = useState(false)
-  const [currentTime, setCurrentTime] = useState(5)
-  const [duration] = useState(320)
+  const [currentTime, setCurrentTime] = useState(0)
+  const [duration, setDuration] = useState(0)
+  const [volume, setVolume] = useState(100)
+  const [isMuted, setIsMuted] = useState(false)
   const progressRef = useRef<HTMLDivElement>(null)
+  const playerRef = useRef<YTPlayer | null>(null)
+  const containerRef = useRef<HTMLDivElement>(null)
+  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null)
 
   const formatTime = (seconds: number) => {
-    const m = Math.floor(seconds / 60)
-      .toString()
-      .padStart(2, "0")
-    const s = Math.floor(seconds % 60)
-      .toString()
-      .padStart(2, "0")
+    const m = Math.floor(seconds / 60).toString().padStart(2, "0")
+    const s = Math.floor(seconds % 60).toString().padStart(2, "0")
     return `${m}:${s}`
   }
 
-  const handleProgressClick = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (progressRef.current) {
-      const rect = progressRef.current.getBoundingClientRect()
-      const x = e.clientX - rect.left
-      const percent = x / rect.width
-      setCurrentTime(Math.floor(percent * duration))
+  const startTimeTracking = useCallback(() => {
+    if (intervalRef.current) clearInterval(intervalRef.current)
+    intervalRef.current = setInterval(() => {
+      if (playerRef.current) {
+        setCurrentTime(playerRef.current.getCurrentTime())
+      }
+    }, 500)
+  }, [])
+
+  const stopTimeTracking = useCallback(() => {
+    if (intervalRef.current) {
+      clearInterval(intervalRef.current)
+      intervalRef.current = null
     }
+  }, [])
+
+  const initPlayer = useCallback(() => {
+    playerRef.current = new window.YT.Player("yt-player", {
+      videoId: VIDEO_ID,
+      playerVars: { rel: 0, modestbranding: 1, controls: 0, disablekb: 1 },
+      events: {
+        onReady: (event) => {
+          setDuration(event.target.getDuration())
+        },
+        onStateChange: (event) => {
+          const { PLAYING, ENDED } = window.YT.PlayerState
+          if (event.data === PLAYING) {
+            setIsPlaying(true)
+            setDuration(event.target.getDuration())
+            startTimeTracking()
+          } else {
+            setIsPlaying(false)
+            stopTimeTracking()
+            if (event.data === ENDED) setCurrentTime(0)
+          }
+        },
+      },
+    })
+  }, [startTimeTracking, stopTimeTracking])
+
+  useEffect(() => {
+    // If API already loaded (e.g. hot-reload)
+    if (window.YT?.Player) {
+      initPlayer()
+      return
+    }
+
+    // Otherwise load the script and init on ready
+    window.onYouTubeIframeAPIReady = initPlayer
+
+    if (!document.querySelector('script[src*="youtube.com/iframe_api"]')) {
+      const tag = document.createElement("script")
+      tag.src = "https://www.youtube.com/iframe_api"
+      document.head.appendChild(tag)
+    }
+
+    return () => {
+      stopTimeTracking()
+      playerRef.current?.destroy()
+    }
+  }, [initPlayer, stopTimeTracking])
+
+  const handlePlayPause = () => {
+    if (!playerRef.current) return
+    if (isPlaying) {
+      playerRef.current.pauseVideo()
+    } else {
+      playerRef.current.playVideo()
+    }
+  }
+
+  const handleProgressClick = (e: MouseEvent<HTMLDivElement>) => {
+    if (!progressRef.current || !playerRef.current || duration === 0) return
+    const rect = progressRef.current.getBoundingClientRect()
+    const percent = (e.clientX - rect.left) / rect.width
+    const newTime = Math.max(0, Math.min(percent * duration, duration))
+    playerRef.current.seekTo(newTime, true)
+    setCurrentTime(newTime)
+  }
+
+  const handleMuteToggle = () => {
+    if (!playerRef.current) return
+    if (isMuted) {
+      playerRef.current.unMute()
+      playerRef.current.setVolume(volume)
+      setIsMuted(false)
+    } else {
+      playerRef.current.mute()
+      setIsMuted(true)
+    }
+  }
+
+  const handleVolumeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const vol = Number(e.target.value)
+    setVolume(vol)
+    if (!playerRef.current) return
+    playerRef.current.setVolume(vol)
+    if (vol === 0) {
+      playerRef.current.mute()
+      setIsMuted(true)
+    } else {
+      playerRef.current.unMute()
+      setIsMuted(false)
+    }
+  }
+
+  const handleFullscreen = () => {
+    containerRef.current?.requestFullscreen?.()
   }
 
   return (
     <main className="p-4 md:p-8 max-w-4xl mx-auto">
       <div className="border-4 border-primary rounded-xl overflow-hidden bg-card shadow-lg">
         {/* Video area */}
-        <div className="relative aspect-video bg-gradient-to-br from-[#e8f4f8] to-[#b8dce8] dark:from-[#1a3040] dark:to-[#0d2030] flex items-center justify-center">
+        <div ref={containerRef} className="relative aspect-video bg-black">
+          {/* YouTube player mount point – the API replaces this div with an iframe */}
+          <div id="yt-player" className="absolute inset-0 w-full h-full" />
+
           {/* ODS 4 badge */}
-          <div className="absolute top-4 left-4 bg-[#c5192d] rounded-lg p-2 shadow-md">
+          <div className="absolute top-4 left-4 bg-[#c5192d] rounded-lg p-2 shadow-md pointer-events-none z-10">
             <span className="text-white font-bold text-lg block leading-none">4</span>
             <span className="text-white text-[8px] font-bold uppercase leading-tight block">
               Educacion<br />de Calidad
@@ -46,20 +189,8 @@ export function VideoPage() {
             </svg>
           </div>
 
-          {/* Decorative plant image representation */}
-          <div className="flex flex-col items-center justify-center">
-            <svg viewBox="0 0 120 150" className="w-32 h-40" fill="none">
-              <path d="M60 150 V80" stroke="#0093d5" strokeWidth="3" />
-              <ellipse cx="60" cy="60" rx="20" ry="30" fill="#0093d5" opacity="0.7" />
-              <ellipse cx="40" cy="50" rx="15" ry="25" fill="#0093d5" opacity="0.5" transform="rotate(-20 40 50)" />
-              <ellipse cx="80" cy="50" rx="15" ry="25" fill="#0093d5" opacity="0.5" transform="rotate(20 80 50)" />
-              <ellipse cx="55" cy="35" rx="12" ry="20" fill="#4dc4e6" opacity="0.6" transform="rotate(-10 55 35)" />
-              <ellipse cx="70" cy="40" rx="10" ry="18" fill="#4dc4e6" opacity="0.6" transform="rotate(15 70 40)" />
-            </svg>
-          </div>
-
           {/* ODS Logo in video */}
-          <div className="absolute bottom-16 left-4 text-primary text-xs font-bold opacity-60">
+          <div className="absolute bottom-4 left-4 text-white text-xs font-bold opacity-60 pointer-events-none z-10">
             OBJETIVOS DE DESARROLLO SOSTENIBLE
           </div>
         </div>
@@ -85,13 +216,13 @@ export function VideoPage() {
           >
             <div
               className="h-full bg-primary-foreground rounded-full transition-all"
-              style={{ width: `${(currentTime / duration) * 100}%` }}
+              style={{ width: duration > 0 ? `${(currentTime / duration) * 100}%` : "0%" }}
             />
           </div>
 
           <div className="flex items-center justify-between">
             <button
-              onClick={() => setIsPlaying(!isPlaying)}
+              onClick={handlePlayPause}
               className="text-primary-foreground hover:text-primary-foreground/80 transition-colors"
               aria-label={isPlaying ? "Pausar" : "Reproducir"}
             >
@@ -100,12 +231,34 @@ export function VideoPage() {
 
             <div className="flex items-center gap-3">
               <span className="text-primary-foreground text-xs font-mono">
-                {formatTime(currentTime)} - {formatTime(duration)}
+                {formatTime(currentTime)} / {formatTime(duration)}
               </span>
-              <button className="text-primary-foreground hover:text-primary-foreground/80" aria-label="Volumen">
-                <Volume2 className="w-4 h-4" />
-              </button>
-              <button className="text-primary-foreground hover:text-primary-foreground/80" aria-label="Pantalla completa">
+              {/* Volume control: icon toggles mute; slider adjusts level on hover */}
+              <div className="flex items-center gap-1 group">
+                <button
+                  onClick={handleMuteToggle}
+                  className="text-primary-foreground hover:text-primary-foreground/80 transition-colors"
+                  aria-label={isMuted ? "Activar sonido" : "Silenciar"}
+                >
+                  {isMuted || volume === 0
+                    ? <VolumeX className="w-4 h-4" />
+                    : <Volume2 className="w-4 h-4" />}
+                </button>
+                <input
+                  type="range"
+                  min={0}
+                  max={100}
+                  value={isMuted ? 0 : volume}
+                  onChange={handleVolumeChange}
+                  className="w-0 group-hover:w-16 transition-all duration-200 overflow-hidden cursor-pointer accent-primary-foreground h-1"
+                  aria-label="Nivel de volumen"
+                />
+              </div>
+              <button
+                onClick={handleFullscreen}
+                className="text-primary-foreground hover:text-primary-foreground/80"
+                aria-label="Pantalla completa"
+              >
                 <Maximize2 className="w-4 h-4" />
               </button>
             </div>

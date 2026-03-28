@@ -2,6 +2,7 @@
 
 import { Play, Volume2, VolumeX, Maximize2, Pause } from "lucide-react"
 import { useState, useRef, useEffect, useCallback, MouseEvent } from "react"
+import { Slider } from "@/components/ui/slider"
 
 // Minimal inline types for the YouTube IFrame API so we don't need @types/youtube
 interface YTPlayer {
@@ -150,8 +151,7 @@ export function VideoPage() {
     }
   }
 
-  const handleVolumeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const vol = Number(e.target.value)
+  const handleVolumeChange = (vol: number) => {
     setVolume(vol)
     if (!playerRef.current) return
     playerRef.current.setVolume(vol)
@@ -244,15 +244,16 @@ export function VideoPage() {
                     ? <VolumeX className="w-4 h-4" />
                     : <Volume2 className="w-4 h-4" />}
                 </button>
-                <input
-                  type="range"
-                  min={0}
-                  max={100}
-                  value={isMuted ? 0 : volume}
-                  onChange={handleVolumeChange}
-                  className="w-0 group-hover:w-16 transition-all duration-200 overflow-hidden cursor-pointer accent-primary-foreground h-1"
-                  aria-label="Nivel de volumen"
-                />
+                <div className="w-0 group-hover:w-20 transition-all duration-300 overflow-hidden px-1">
+                  <Slider
+                    value={[isMuted ? 0 : volume]}
+                    min={0}
+                    max={100}
+                    step={1}
+                    onValueChange={(vals) => handleVolumeChange(vals[0])}
+                    className="cursor-pointer"
+                  />
+                </div>
               </div>
               <button
                 onClick={handleFullscreen}

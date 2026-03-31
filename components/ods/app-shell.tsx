@@ -1,5 +1,6 @@
 "use client"
 
+import { useEffect } from "react"
 import { useApp } from "@/lib/app-context"
 import { Header } from "./header"
 import { Sidebar } from "./sidebar"
@@ -29,6 +30,17 @@ const pageComponents: Record<string, React.ComponentType> = {
 export function AppShell() {
   const { currentPage, accessibility } = useApp()
 
+  useEffect(() => {
+    // Set the base font size on the html element so rem units scale correctly
+    const rootFontSize = fontSizes[accessibility.fontSizeIndex]
+    document.documentElement.style.fontSize = `${rootFontSize}px`
+
+    // Clean up if needed (optional but good practice)
+    return () => {
+      document.documentElement.style.fontSize = ""
+    }
+  }, [accessibility.fontSizeIndex])
+
   const PageComponent = pageComponents[currentPage] || HomePage
 
   // Mapping color blindness to CSS filter values
@@ -46,10 +58,9 @@ export function AppShell() {
   }
 
   return (
-    <div 
+    <div
       className={`min-h-screen bg-background flex flex-col transition-all duration-300 ${accessibility.highContrast ? "high-contrast" : ""}`}
-      style={{ 
-        fontSize: `${fontSizes[accessibility.fontSizeIndex]}px`,
+      style={{
         filter: getColorBlindFilter()
       }}
     >

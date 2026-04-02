@@ -10,8 +10,7 @@ export type Page =
   | "donations"
   | "profile"
   | "forum"
-  | "accessibility-1"
-  | "accessibility-2"
+  | "accessibility"
   | "tutorial"
 
 export interface AccessibilitySettings {
@@ -46,7 +45,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const [tutorialStep, setTutorialStep] = useState(0)
   const [showTutorial, setShowTutorial] = useState(true)
   const [profileTab, setProfileTab] = useState<"info" | "notifications" | "progress">("info")
-  
+
   const [accessibility, setAccessibilityState] = useState<AccessibilitySettings>({
     fontSizeIndex: 3,
     colorBlindMode: "Ninguno",

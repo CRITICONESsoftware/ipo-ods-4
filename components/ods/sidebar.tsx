@@ -18,7 +18,7 @@ const navItems: NavItem[] = [
   { label: "Videos", page: "video", group: "interactive" },
   { label: "Mi cuenta", page: "profile", group: "account" },
   { label: "Foro", page: "forum", group: "account" },
-  { label: "Opciones de accesibilidad", page: "accessibility-1", group: "settings" },
+  { label: "Opciones de accesibilidad", page: "accessibility", group: "settings" },
   { label: "Tutorial de uso", page: "tutorial", group: "settings" },
 ]
 

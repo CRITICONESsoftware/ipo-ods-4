@@ -11,8 +11,7 @@ import { VideoPage } from "./video-page"
 import { DonationsPage } from "./donations-page"
 import { ProfilePage } from "./profile-page"
 import { ForumPage } from "./forum-page"
-import { AccessibilityPage1, fontSizes } from "./accessibility-page-1"
-import { AccessibilityPage2 } from "./accessibility-page-2"
+import { AccessibilityPage, fontSizes } from "./accessibility-page"
 
 const pageComponents: Record<string, React.ComponentType> = {
   home: HomePage,
@@ -22,8 +21,7 @@ const pageComponents: Record<string, React.ComponentType> = {
   donations: DonationsPage,
   profile: ProfilePage,
   forum: ForumPage,
-  "accessibility-1": AccessibilityPage1,
-  "accessibility-2": AccessibilityPage2,
+  accessibility: AccessibilityPage,
   tutorial: HomePage,
 }
 

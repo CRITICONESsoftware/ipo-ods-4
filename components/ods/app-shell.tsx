@@ -71,11 +71,6 @@ export function AppShell() {
         <div className="h-full overflow-y-auto">
           <PageComponent />
         </div>
-
-        {/* Right side decorative scrollbar */}
-        <div className="absolute right-0 top-0 bottom-0 w-3 bg-primary/10 hidden md:block">
-          <div className="w-full h-1/3 bg-primary/30 rounded-full" />
-        </div>
       </div>
 
       {/* Color Blindness SVG Filters (Simulated) */}

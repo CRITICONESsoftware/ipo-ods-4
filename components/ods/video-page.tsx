@@ -1,6 +1,6 @@
 "use client"
 
-import { Play, Volume2, VolumeX, Maximize2, Pause } from "lucide-react"
+import { Play, Volume2, VolumeX, Maximize2, Pause, Captions } from "lucide-react"
 import { useState, useRef, useEffect, useCallback, MouseEvent } from "react"
 import { Slider } from "@/components/ui/slider"
 
@@ -17,6 +17,10 @@ interface YTPlayer {
   unMute: () => void
   isMuted: () => boolean
   destroy: () => void
+  loadModule: (name: string) => void
+  unloadModule: (name: string) => void
+  setOption: (module: string, option: string, value: any) => void
+  getOptions: (module: string) => string[]
 }
 interface YTPlayerEvent {
   target: YTPlayer
@@ -40,7 +44,7 @@ declare global {
   }
 }
 
-const VIDEO_ID = "4WeJDw9eVQA"
+const VIDEO_ID = "WJoUZ1SLAHw"
 
 export function VideoPage() {
   const [isPlaying, setIsPlaying] = useState(false)
@@ -48,6 +52,7 @@ export function VideoPage() {
   const [duration, setDuration] = useState(0)
   const [volume, setVolume] = useState(100)
   const [isMuted, setIsMuted] = useState(false)
+  const [captionsEnabled, setCaptionsEnabled] = useState(false)
   const progressRef = useRef<HTMLDivElement>(null)
   const playerRef = useRef<YTPlayer | null>(null)
   const containerRef = useRef<HTMLDivElement>(null)
@@ -78,7 +83,7 @@ export function VideoPage() {
   const initPlayer = useCallback(() => {
     playerRef.current = new window.YT.Player("yt-player", {
       videoId: VIDEO_ID,
-      playerVars: { rel: 0, modestbranding: 1, controls: 0, disablekb: 1 },
+      playerVars: { rel: 0, modestbranding: 1, controls: 0, disablekb: 1, cc_load_policy: 1 },
       events: {
         onReady: (event) => {
           setDuration(event.target.getDuration())
@@ -166,6 +171,17 @@ export function VideoPage() {
 
   const handleFullscreen = () => {
     containerRef.current?.requestFullscreen?.()
+  }
+
+  const handleCaptionsToggle = () => {
+    if (!playerRef.current) return
+    if (captionsEnabled) {
+      playerRef.current.unloadModule("captions")
+      setCaptionsEnabled(false)
+    } else {
+      playerRef.current.loadModule("captions")
+      setCaptionsEnabled(true)
+    }
   }
 
   return (
@@ -261,6 +277,13 @@ export function VideoPage() {
                 aria-label="Pantalla completa"
               >
                 <Maximize2 className="w-4 h-4" />
+              </button>
+              <button
+                onClick={handleCaptionsToggle}
+                className={`transition-colors ${captionsEnabled ? "text-primary-foreground" : "text-primary-foreground/40 hover:text-primary-foreground/70"}`}
+                aria-label={captionsEnabled ? "Desactivar subtítulos" : "Activar subtítulos"}
+              >
+                <Captions className="w-5 h-5" />
               </button>
             </div>
           </div>

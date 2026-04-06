@@ -2,6 +2,7 @@
 
 import { ChevronLeft, ChevronRight } from "lucide-react"
 import { useApp } from "@/lib/app-context"
+import { useRouter } from "next/navigation"
 
 const tutorialSteps = [
   {
@@ -15,7 +16,8 @@ const tutorialSteps = [
 ]
 
 export function TutorialOverlay() {
-  const { showTutorial, setShowTutorial, tutorialStep, setTutorialStep, setCurrentPage } = useApp()
+  const { showTutorial, setShowTutorial, tutorialStep, setTutorialStep } = useApp()
+  const router = useRouter()
 
   if (!showTutorial) return null
 
@@ -26,7 +28,7 @@ export function TutorialOverlay() {
       setTutorialStep(tutorialStep + 1)
     } else {
       setShowTutorial(false)
-      setCurrentPage("home")
+      router.push("/")
     }
   }
 
@@ -38,7 +40,7 @@ export function TutorialOverlay() {
 
   const handleSkip = () => {
     setShowTutorial(false)
-    setCurrentPage("home")
+    router.push("/")
   }
 
   return (
@@ -98,9 +100,8 @@ export function TutorialOverlay() {
             {tutorialSteps.map((_, i) => (
               <div
                 key={i}
-                className={`w-3 h-3 rounded-full transition-colors ${
-                  i === tutorialStep ? "bg-primary-foreground" : "bg-primary-foreground/40"
-                }`}
+                className={`w-3 h-3 rounded-full transition-colors ${i === tutorialStep ? "bg-primary-foreground" : "bg-primary-foreground/40"
+                  }`}
               />
             ))}
           </div>

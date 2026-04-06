@@ -33,7 +33,7 @@ const quizQuestions = [
 ]
 
 export function QuizPage() {
-  const { setCurrentPage } = useApp()
+  const { } = useApp()
   const [currentQuestion, setCurrentQuestion] = useState(0)
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null)
   const [showResult, setShowResult] = useState(false)
@@ -91,7 +91,7 @@ export function QuizPage() {
                     const y1 = 50 + 30 * Math.sin((angle * Math.PI) / 180)
                     const x2 = 50 + 45 * Math.cos((angle * Math.PI) / 180)
                     const y2 = 50 + 45 * Math.sin((angle * Math.PI) / 180)
-                    const colors = ["#e5243b","#dda63a","#4c9f38","#c5192d","#ff3a21","#26bde2","#fcc30b","#a21942","#fd6925","#dd1367","#fd9d24","#bf8b2e","#3f7e44","#0a97d9","#56c02b","#00689d","#19486a"]
+                    const colors = ["#e5243b", "#dda63a", "#4c9f38", "#c5192d", "#ff3a21", "#26bde2", "#fcc30b", "#a21942", "#fd6925", "#dd1367", "#fd9d24", "#bf8b2e", "#3f7e44", "#0a97d9", "#56c02b", "#00689d", "#19486a"]
                     return (
                       <line key={i} x1={x1} y1={y1} x2={x2} y2={y2} stroke={colors[i]} strokeWidth="4" strokeLinecap="round" />
                     )
@@ -156,7 +156,7 @@ function QuizResult({
                   const y1 = 50 + 30 * Math.sin((angle * Math.PI) / 180)
                   const x2 = 50 + 45 * Math.cos((angle * Math.PI) / 180)
                   const y2 = 50 + 45 * Math.sin((angle * Math.PI) / 180)
-                  const colors = ["#e5243b","#dda63a","#4c9f38","#c5192d","#ff3a21","#26bde2","#fcc30b","#a21942","#fd6925","#dd1367","#fd9d24","#bf8b2e","#3f7e44","#0a97d9","#56c02b","#00689d","#19486a"]
+                  const colors = ["#e5243b", "#dda63a", "#4c9f38", "#c5192d", "#ff3a21", "#26bde2", "#fcc30b", "#a21942", "#fd6925", "#dd1367", "#fd9d24", "#bf8b2e", "#3f7e44", "#0a97d9", "#56c02b", "#00689d", "#19486a"]
                   return <line key={i} x1={x1} y1={y1} x2={x2} y2={y2} stroke={colors[i]} strokeWidth="4" strokeLinecap="round" />
                 })}
                 <text x="50" y="44" textAnchor="middle" fill="#0093d5" fontSize="10" fontWeight="bold">AGENDA</text>

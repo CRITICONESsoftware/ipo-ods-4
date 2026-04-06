@@ -5,7 +5,6 @@ import { Share2 } from "lucide-react"
 import { useApp } from "@/lib/app-context"
 
 export function HomePage() {
-  const { setCurrentPage } = useApp()
   const [isSharing, setIsSharing] = useState(false)
 
   const handleShare = async () => {

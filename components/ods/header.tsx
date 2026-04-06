@@ -3,6 +3,7 @@
 import { Menu, Sun, Moon } from "lucide-react"
 import { useTheme } from "next-themes"
 import { useApp } from "@/lib/app-context"
+import Link from "next/link"
 
 export function Header() {
   const { theme, setTheme } = useTheme()
@@ -18,7 +19,7 @@ export function Header() {
         <Menu className="w-6 h-6" />
       </button>
 
-      <div className="flex items-center gap-1">
+      <Link href="/" className="flex items-center gap-1 hover:opacity-90 transition-opacity">
         <img
           src="/icon.webp"
           alt="ODS Logo"
@@ -32,7 +33,7 @@ export function Header() {
             DE DESARROLLO{"\n"}SOSTENIBLE
           </span>
         </h1>
-      </div>
+      </Link>
 
       <button
         onClick={() => setTheme(theme === "dark" ? "light" : "dark")}

@@ -3,6 +3,7 @@
 import { toast, Toaster } from "sonner"
 import { useApp } from "@/lib/app-context"
 import { ArrowLeft } from "lucide-react"
+import Link from "next/link"
 
 const colorBlindOptions = [
     "Ninguno",
@@ -18,7 +19,7 @@ const colorBlindOptions = [
 export const fontSizes = [12, 14, 16, 18, 20, 22, 24]
 
 export function AccessibilityPage() {
-    const { setCurrentPage, accessibility, setAccessibility } = useApp()
+    const { accessibility, setAccessibility } = useApp()
 
     const handleSettingChange = (setting: string, value: any) => {
         setAccessibility({ [setting]: value })
@@ -33,13 +34,13 @@ export function AccessibilityPage() {
             <Toaster position="top-right" richColors />
 
             <div className="flex items-center gap-4 mb-8">
-                <button
-                    onClick={() => setCurrentPage("home")}
+                <Link
+                    href="/"
                     className="p-2 rounded-full hover:bg-muted transition-colors"
                     aria-label="Volver al inicio"
                 >
                     <ArrowLeft className="w-6 h-6" />
-                </button>
+                </Link>
                 <h2 className="text-2xl font-bold text-foreground uppercase tracking-wider">
                     Opciones de Accesibilidad
                 </h2>

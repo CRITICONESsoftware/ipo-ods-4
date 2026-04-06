@@ -2,28 +2,31 @@
 
 import { X } from "lucide-react"
 import { useApp } from "@/lib/app-context"
-import type { ReactNode } from "react"
+import Link from "next/link"
+import { useRouter } from "next/navigation"
 
 interface NavItem {
   label: string
-  page: string
+  href: string
+  page?: string
   group?: string
 }
 
 const navItems: NavItem[] = [
-  { label: "Noticias", page: "home", group: "info" },
-  { label: "Informes", page: "home", group: "info" },
-  { label: "Donaciones", page: "donations", group: "info" },
-  { label: "Cuestionarios", page: "quiz", group: "interactive" },
-  { label: "Videos", page: "video", group: "interactive" },
-  { label: "Mi cuenta", page: "profile", group: "account" },
-  { label: "Foro", page: "forum", group: "account" },
-  { label: "Opciones de accesibilidad", page: "accessibility", group: "settings" },
-  { label: "Tutorial de uso", page: "tutorial", group: "settings" },
+  { label: "Noticias", href: "/", group: "info" },
+  { label: "Informes", href: "/", group: "info" },
+  { label: "Donaciones", href: "/donations", group: "info" },
+  { label: "Cuestionarios", href: "/quiz", group: "interactive" },
+  { label: "Videos", href: "/video", group: "interactive" },
+  { label: "Mi cuenta", href: "/profile", group: "account" },
+  { label: "Foro", href: "/forum", group: "account" },
+  { label: "Opciones de accesibilidad", href: "/accessibility", group: "settings" },
+  { label: "Tutorial de uso", href: "/", page: "tutorial", group: "settings" },
 ]
 
 export function Sidebar() {
-  const { sidebarOpen, setSidebarOpen, setCurrentPage, setShowTutorial, setTutorialStep } = useApp()
+  const { sidebarOpen, setSidebarOpen, setShowTutorial, setTutorialStep, notifications } = useApp()
+  const router = useRouter()
 
   if (!sidebarOpen) return null
 
@@ -31,9 +34,6 @@ export function Sidebar() {
     if (item.page === "tutorial") {
       setShowTutorial(true)
       setTutorialStep(0)
-      setCurrentPage("home")
-    } else {
-      setCurrentPage(item.page as never)
     }
     setSidebarOpen(false)
   }
@@ -71,13 +71,17 @@ export function Sidebar() {
           {groups.map((group, gi) => (
             <div key={group.key}>
               {group.items.map((item) => (
-                <button
+                <Link
                   key={item.label}
+                  href={item.href}
                   onClick={() => handleNav(item)}
-                  className="w-full text-left px-6 py-3 text-sm font-medium hover:bg-primary hover:text-primary-foreground transition-colors"
+                  className="w-full text-left px-6 py-3 text-sm font-medium hover:bg-primary hover:text-primary-foreground transition-colors flex items-center justify-between"
                 >
                   {item.label}
-                </button>
+                  {item.href === "/profile" && notifications.some(n => !n.read) && (
+                    <span className="w-2 h-2 bg-destructive rounded-full" />
+                  )}
+                </Link>
               ))}
               {gi < groups.length - 1 && (
                 <div className="mx-4 my-1 border-t border-border" />

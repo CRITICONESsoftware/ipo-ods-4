@@ -1,12 +1,7 @@
 "use client"
 
-import { AppProvider } from "@/lib/app-context"
-import { AppShell } from "@/components/ods/app-shell"
+import { HomePage } from "@/components/ods/home-page"
 
 export default function Page() {
-  return (
-    <AppProvider>
-      <AppShell />
-    </AppProvider>
-  )
+  return <HomePage />
 }

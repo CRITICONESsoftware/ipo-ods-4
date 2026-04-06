@@ -53,24 +53,11 @@ export function HomePage() {
         </div>
 
         <div className="flex-shrink-0 w-full md:w-48">
-          <div className="bg-[#c5192d] rounded-lg p-4 text-center">
-            <div className="text-primary-foreground">
-              <span className="text-4xl font-bold text-white">4</span>
-              <div className="text-xs font-bold mt-1 text-white uppercase leading-tight">
-                Educacion<br />de Calidad
-              </div>
-            </div>
-            <div className="mt-3 flex justify-center">
-              <svg viewBox="0 0 80 80" className="w-16 h-16" fill="none">
-                <path d="M15 60 V20 H45 L55 30 V60 Z" stroke="white" strokeWidth="3" fill="none" />
-                <path d="M25 35 H45" stroke="white" strokeWidth="2" />
-                <path d="M25 42 H45" stroke="white" strokeWidth="2" />
-                <path d="M25 49 H40" stroke="white" strokeWidth="2" />
-                <circle cx="58" cy="55" r="14" stroke="white" strokeWidth="3" fill="none" />
-                <path d="M52 55 L56 59 L64 51" stroke="white" strokeWidth="2.5" fill="none" />
-              </svg>
-            </div>
-          </div>
+          <img
+            src="/ods4.jpg"
+            alt="ODS 4: Educación de Calidad"
+            className="w-full rounded-lg shadow-md border border-border"
+          />
         </div>
       </div>
     </main>

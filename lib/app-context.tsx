@@ -57,11 +57,30 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const [tutorialStep, setTutorialStep] = useState(0)
   const [showTutorial, setShowTutorialState] = useState(false)
+  const [accessibility, setAccessibilityState] = useState<AccessibilitySettings>({
+    fontSizeIndex: 3,
+    colorBlindMode: "Ninguno",
+    highContrast: false,
+    contentReader: false,
+    voiceNav: false,
+    vibration: false,
+  })
 
   useEffect(() => {
+    // Load tutorial status
     const tutorialShown = localStorage.getItem("tutorialShown")
     if (!tutorialShown) {
       setShowTutorialState(true)
+    }
+
+    // Load accessibility settings
+    const savedAccessibility = localStorage.getItem("accessibility")
+    if (savedAccessibility) {
+      try {
+        setAccessibilityState(JSON.parse(savedAccessibility))
+      } catch (e) {
+        console.error("Failed to load accessibility settings", e)
+      }
     }
   }, [])
 
@@ -71,6 +90,15 @@ export function AppProvider({ children }: { children: ReactNode }) {
       localStorage.setItem("tutorialShown", "true")
     }
   }
+
+  const setAccessibility = (newSettings: Partial<AccessibilitySettings>) => {
+    setAccessibilityState(prev => {
+      const updated = { ...prev, ...newSettings }
+      localStorage.setItem("accessibility", JSON.stringify(updated))
+      return updated
+    })
+  }
+
   const [profileTab, setProfileTab] = useState<"info" | "notifications" | "progress">("info")
   const [user, setUserState] = useState<UserProfile>({
     name: "Alex García",
@@ -107,19 +135,6 @@ export function AppProvider({ children }: { children: ReactNode }) {
 
   const setUser = (newUserData: Partial<UserProfile>) => {
     setUserState(prev => ({ ...prev, ...newUserData }))
-  }
-
-  const [accessibility, setAccessibilityState] = useState<AccessibilitySettings>({
-    fontSizeIndex: 3,
-    colorBlindMode: "Ninguno",
-    highContrast: false,
-    contentReader: false,
-    voiceNav: false,
-    vibration: false,
-  })
-
-  const setAccessibility = (newSettings: Partial<AccessibilitySettings>) => {
-    setAccessibilityState(prev => ({ ...prev, ...newSettings }))
   }
 
   return (

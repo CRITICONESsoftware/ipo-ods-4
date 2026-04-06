@@ -3,7 +3,7 @@
 import { Play, Volume2, VolumeX, Maximize2, Pause, Captions } from "lucide-react"
 import { useState, useRef, useEffect, useCallback, MouseEvent } from "react"
 import { Slider } from "@/components/ui/slider"
-
+import { useApp } from "@/lib/app-context"
 // Minimal inline types for the YouTube IFrame API so we don't need @types/youtube
 interface YTPlayer {
   playVideo: () => void
@@ -28,6 +28,7 @@ interface YTPlayerEvent {
 }
 interface YTPlayerOptions {
   videoId: string
+  host?: string
   playerVars?: Record<string, number | string>
   events?: {
     onReady?: (e: YTPlayerEvent) => void
@@ -80,13 +81,32 @@ export function VideoPage() {
     }
   }, [])
 
+  const { accessibility } = useApp()
+
   const initPlayer = useCallback(() => {
+    // Si el div contenedor ya no está, abortamos
+    if (!document.getElementById("yt-player")) return
+
     playerRef.current = new window.YT.Player("yt-player", {
       videoId: VIDEO_ID,
-      playerVars: { rel: 0, modestbranding: 1, controls: 0, disablekb: 1, cc_load_policy: 1 },
+      host: 'https://www.youtube-nocookie.com',
+      playerVars: { 
+        origin: window.location.origin,
+        rel: 0, 
+        modestbranding: 1, 
+        controls: 0, 
+        disablekb: 1, 
+        cc_load_policy: accessibility.hearingAids || captionsEnabled ? 1 : 0 
+      },
       events: {
         onReady: (event) => {
           setDuration(event.target.getDuration())
+          if (accessibility.hearingAids) {
+            event.target.setVolume(100)
+            setVolume(100)
+            event.target.loadModule?.("captions")
+            setCaptionsEnabled(true)
+          }
         },
         onStateChange: (event) => {
           const { PLAYING, ENDED } = window.YT.PlayerState
@@ -102,7 +122,7 @@ export function VideoPage() {
         },
       },
     })
-  }, [startTimeTracking, stopTimeTracking])
+  }, [startTimeTracking, stopTimeTracking, accessibility.hearingAids, captionsEnabled])
 
   useEffect(() => {
     // If API already loaded (e.g. hot-reload)
@@ -125,6 +145,14 @@ export function VideoPage() {
       playerRef.current?.destroy()
     }
   }, [initPlayer, stopTimeTracking])
+
+  // React to hearingAids toggle while playing
+  useEffect(() => {
+    if (playerRef.current && accessibility.hearingAids) {
+        playerRef.current.loadModule?.("captions")
+        setCaptionsEnabled(true)
+    }
+  }, [accessibility.hearingAids])
 
   const handlePlayPause = () => {
     if (!playerRef.current) return
@@ -185,40 +213,36 @@ export function VideoPage() {
   }
 
   return (
-    <main className="p-4 md:p-8 max-w-4xl mx-auto">
-      <div className="border-4 border-primary rounded-xl overflow-hidden bg-card shadow-lg">
+    <main className="p-4 md:p-8 max-w-5xl mx-auto">
+      <div ref={containerRef} className="border-4 border-primary rounded-xl overflow-hidden bg-card shadow-lg flex flex-col">
         {/* Video area */}
-        <div ref={containerRef} className="relative aspect-video bg-black">
+        <div className="relative aspect-video bg-black w-full">
           {/* YouTube player mount point – the API replaces this div with an iframe */}
           <div id="yt-player" className="absolute inset-0 w-full h-full" />
 
-          {/* ODS 4 badge */}
-          <div className="absolute top-4 left-4 bg-[#c5192d] rounded-lg p-2 shadow-md pointer-events-none z-10">
-            <span className="text-white font-bold text-lg block leading-none">4</span>
-            <span className="text-white text-[8px] font-bold uppercase leading-tight block">
+          {/* ODS 4 badge - Moved to top-right to avoid overlapping YouTube's built-in title/controls */}
+          <div className="absolute top-4 right-4 bg-[#c5192d] rounded-lg p-2 shadow-md pointer-events-none z-10">
+            <span className="text-white font-bold text-lg block leading-none text-center">4</span>
+            <span className="text-white text-[8px] font-bold uppercase leading-tight block text-center mt-0.5">
               Educacion<br />de Calidad
             </span>
-            <svg viewBox="0 0 40 40" className="w-6 h-6 mt-1" fill="none">
-              <path d="M8 30 V10 H22 L27 15 V30 Z" stroke="white" strokeWidth="1.5" />
-              <circle cx="30" cy="28" r="7" stroke="white" strokeWidth="1.5" />
-              <path d="M27 28 L29 30 L33 26" stroke="white" strokeWidth="1.2" />
-            </svg>
           </div>
 
           {/* ODS Logo in video */}
-          <div className="absolute bottom-4 left-4 text-white text-xs font-bold opacity-60 pointer-events-none z-10">
-            OBJETIVOS DE DESARROLLO SOSTENIBLE
+          <div className="absolute top-4 left-4 text-white text-xs font-bold opacity-80 pointer-events-none z-10 flex flex-col drop-shadow-md">
+            <span>OBJETIVOS DE</span>
+            <span>DESARROLLO SOSTENIBLE</span>
           </div>
         </div>
 
         {/* Video controls */}
-        <div className="bg-primary/90 px-3 py-2">
+        <div className="bg-primary/95 px-4 py-3 shrink-0">
           {/* SDG color strip */}
-          <div className="flex gap-0.5 mb-2">
+          <div className="flex gap-0 mb-3 rounded-full overflow-hidden h-1.5 opacity-90">
             {["#e5243b","#dda63a","#4c9f38","#c5192d","#ff3a21","#26bde2","#fcc30b","#a21942","#fd6925","#dd1367","#fd9d24","#bf8b2e","#3f7e44","#0a97d9","#56c02b","#00689d","#19486a"].map((color, i) => (
               <div
                 key={i}
-                className="flex-1 h-2 rounded-sm"
+                className="flex-1 h-full"
                 style={{ backgroundColor: color }}
               />
             ))}
@@ -227,11 +251,11 @@ export function VideoPage() {
           {/* Progress bar */}
           <div
             ref={progressRef}
-            className="w-full h-1.5 bg-primary-foreground/30 rounded-full cursor-pointer mb-2"
+            className="w-full h-2 bg-primary-foreground/20 rounded-full cursor-pointer mb-3 relative group"
             onClick={handleProgressClick}
           >
             <div
-              className="h-full bg-primary-foreground rounded-full transition-all"
+              className="absolute top-0 left-0 h-full bg-primary-foreground rounded-full transition-all group-hover:bg-accent"
               style={{ width: duration > 0 ? `${(currentTime / duration) * 100}%` : "0%" }}
             />
           </div>
@@ -239,28 +263,28 @@ export function VideoPage() {
           <div className="flex items-center justify-between">
             <button
               onClick={handlePlayPause}
-              className="text-primary-foreground hover:text-primary-foreground/80 transition-colors"
+              className="text-primary-foreground hover:scale-110 active:scale-95 transition-all p-1"
               aria-label={isPlaying ? "Pausar" : "Reproducir"}
             >
-              {isPlaying ? <Pause className="w-5 h-5" /> : <Play className="w-5 h-5" />}
+              {isPlaying ? <Pause className="w-6 h-6 fill-current" /> : <Play className="w-6 h-6 fill-current" />}
             </button>
 
-            <div className="flex items-center gap-3">
-              <span className="text-primary-foreground text-xs font-mono">
+            <div className="flex items-center gap-4">
+              <span className="text-primary-foreground text-sm font-mono opacity-90 hidden sm:block">
                 {formatTime(currentTime)} / {formatTime(duration)}
               </span>
-              {/* Volume control: icon toggles mute; slider adjusts level on hover */}
-              <div className="flex items-center gap-1 group">
+              {/* Volume control */}
+              <div className="flex items-center gap-2 group/vol">
                 <button
                   onClick={handleMuteToggle}
-                  className="text-primary-foreground hover:text-primary-foreground/80 transition-colors"
+                  className="text-primary-foreground hover:scale-110 transition-transform p-1"
                   aria-label={isMuted ? "Activar sonido" : "Silenciar"}
                 >
                   {isMuted || volume === 0
-                    ? <VolumeX className="w-4 h-4" />
-                    : <Volume2 className="w-4 h-4" />}
+                    ? <VolumeX className="w-5 h-5" />
+                    : <Volume2 className="w-5 h-5" />}
                 </button>
-                <div className="w-0 group-hover:w-20 transition-all duration-300 overflow-hidden px-1">
+                <div className="w-0 sm:group-hover/vol:w-24 group-hover/vol:w-16 transition-all duration-300 overflow-hidden flex items-center h-full">
                   <Slider
                     value={[isMuted ? 0 : volume]}
                     min={0}
@@ -272,18 +296,18 @@ export function VideoPage() {
                 </div>
               </div>
               <button
-                onClick={handleFullscreen}
-                className="text-primary-foreground hover:text-primary-foreground/80"
-                aria-label="Pantalla completa"
-              >
-                <Maximize2 className="w-4 h-4" />
-              </button>
-              <button
                 onClick={handleCaptionsToggle}
-                className={`transition-colors ${captionsEnabled ? "text-primary-foreground" : "text-primary-foreground/40 hover:text-primary-foreground/70"}`}
+                className={`transition-all p-1 hover:scale-110 ${captionsEnabled ? "text-primary-foreground" : "text-primary-foreground/40"}`}
                 aria-label={captionsEnabled ? "Desactivar subtítulos" : "Activar subtítulos"}
               >
                 <Captions className="w-5 h-5" />
+              </button>
+              <button
+                onClick={handleFullscreen}
+                className="text-primary-foreground hover:scale-110 transition-transform p-1 ml-1"
+                aria-label="Pantalla completa"
+              >
+                <Maximize2 className="w-5 h-5" />
               </button>
             </div>
           </div>

@@ -9,6 +9,18 @@ const tutorialSteps = [
     highlight: "menu",
   },
   {
+    text: "Personaliza tu experiencia: Activa la Lupa, el Narrador o filtros de color desde el panel de Accesibilidad",
+    highlight: "accessibility",
+  },
+  {
+    text: "¡Habla con la web! Activa el Control por Voz para navegar diciendo 'Inicio', 'Vídeo' o 'Perfil'",
+    highlight: "voice",
+  },
+  {
+    text: "Atajos Rápidos: H (Inicio), P (Perfil), V (Vídeo), A (Ajustes), F (Foro), D (Donar), Q (Quiz), L (Login), S (Registro)",
+    highlight: "keyboard",
+  },
+  {
     text: "Para alternar entre modo claro y modo oscuro, pulse el boton de la esquina superior derecha",
     highlight: "theme",
   },

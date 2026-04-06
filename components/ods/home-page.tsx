@@ -3,13 +3,15 @@
 import { useState } from "react"
 import { Share2 } from "lucide-react"
 import { useApp } from "@/lib/app-context"
+import { useToast } from "@/components/ui/use-toast"
 
 export function HomePage() {
   const { setCurrentPage } = useApp()
+  const { toast } = useToast()
   const [isSharing, setIsSharing] = useState(false)
 
   const handleShare = async () => {
-    if (!navigator.share || isSharing) return
+    if (isSharing || typeof navigator === 'undefined' || !navigator.share) return
 
     try {
       setIsSharing(true)
@@ -19,8 +21,13 @@ export function HomePage() {
         url: window.location.href,
       })
     } catch (error) {
-      // Ignoramos el error si el usuario cancela (AbortError), pero registramos otros
-      if ((error as Error).name !== "AbortError") {
+      if ((error as Error).name === "NotAllowedError" || (error as Error).name === "SecurityError") {
+        await navigator.clipboard.writeText(window.location.href).catch(() => {})
+        toast({
+          title: "¡Enlace Copiado!",
+          description: "Hemos guardado el enlace directo en tu portapapeles.",
+        })
+      } else if ((error as Error).name !== "AbortError") {
         console.error("Error al compartir:", error)
       }
     } finally {
@@ -29,13 +36,13 @@ export function HomePage() {
   }
 
   return (
-    <main className="p-4 md:p-8 max-w-4xl mx-auto">
-      <h2 className="text-2xl md:text-3xl font-bold text-center text-foreground mb-6 text-balance">
+    <main className="p-3 md:p-4 max-w-4xl mx-auto animate-in fade-in duration-500">
+      <h2 className="text-xl md:text-2xl font-[900] text-center text-foreground mb-3 uppercase tracking-tight">
         ODS 4: EDUCACIÓN DE CALIDAD
       </h2>
 
-      <div className="flex flex-col md:flex-row gap-6 items-start">
-        <div className="flex-1 bg-card border border-border rounded-lg p-6 shadow-sm">
+      <div className="flex flex-col md:flex-row gap-4 items-start">
+        <div className="flex-1 bg-card border border-border rounded-lg p-4 shadow-sm">
           <p className="text-foreground leading-relaxed mb-4">
             El Objetivo de Desarrollo Sostenible 4 es uno de los 17 objetivos
             establecidos por las Naciones Unidas en la Agenda 2030.

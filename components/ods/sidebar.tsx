@@ -1,6 +1,6 @@
 "use client"
 
-import { X } from "lucide-react"
+import { X, LayoutDashboard, Home, BookOpen, GraduationCap, DollarSign, User, MessageCircle, Settings, HelpCircle, ShieldAlert } from "lucide-react"
 import { useApp } from "@/lib/app-context"
 import type { ReactNode } from "react"
 
@@ -8,22 +8,23 @@ interface NavItem {
   label: string
   page: string
   group?: string
+  icon?: any
 }
 
 const navItems: NavItem[] = [
-  { label: "Noticias", page: "home", group: "info" },
-  { label: "Informes", page: "home", group: "info" },
-  { label: "Donaciones", page: "donations", group: "info" },
-  { label: "Cuestionarios", page: "quiz", group: "interactive" },
-  { label: "Videos", page: "video", group: "interactive" },
-  { label: "Mi cuenta", page: "profile", group: "account" },
-  { label: "Foro", page: "forum", group: "account" },
-  { label: "Opciones de accesibilidad", page: "accessibility", group: "settings" },
-  { label: "Tutorial de uso", page: "tutorial", group: "settings" },
+  { label: "Inicio", page: "home", group: "info", icon: Home },
+  { label: "Informes", page: "home", group: "info", icon: BookOpen },
+  { label: "Donaciones", page: "donations", group: "info", icon: DollarSign },
+  { label: "Cuestionarios", page: "quiz", group: "interactive", icon: GraduationCap },
+  { label: "Videos", page: "video", group: "interactive", icon: GraduationCap },
+  { label: "Mi cuenta", page: "profile", group: "account", icon: User },
+  { label: "Foro", page: "forum", group: "account", icon: MessageCircle },
+  { label: "Accesibilidad", page: "accessibility", group: "settings", icon: Settings },
+  { label: "Tutorial", page: "tutorial", group: "settings", icon: HelpCircle },
 ]
 
 export function Sidebar() {
-  const { sidebarOpen, setSidebarOpen, setCurrentPage, setShowTutorial, setTutorialStep } = useApp()
+  const { sidebarOpen, setSidebarOpen, setCurrentPage, setShowTutorial, setTutorialStep, user } = useApp()
 
   if (!sidebarOpen) return null
 
@@ -33,16 +34,21 @@ export function Sidebar() {
       setTutorialStep(0)
       setCurrentPage("home")
     } else {
-      setCurrentPage(item.page as never)
+      setCurrentPage(item.page as any)
     }
     setSidebarOpen(false)
   }
 
+  const currentNavItems = [...navItems]
+  if (user?.role === "admin") {
+    currentNavItems.push({ label: "Administración", page: "admin", group: "settings", icon: ShieldAlert })
+  }
+
   const groups = [
-    { key: "info", items: navItems.filter((i) => i.group === "info") },
-    { key: "interactive", items: navItems.filter((i) => i.group === "interactive") },
-    { key: "account", items: navItems.filter((i) => i.group === "account") },
-    { key: "settings", items: navItems.filter((i) => i.group === "settings") },
+    { key: "info", label: "INFORMACIÓN", items: currentNavItems.filter((i) => i.group === "info") },
+    { key: "interactive", label: "APRENDIZAJE", items: currentNavItems.filter((i) => i.group === "interactive") },
+    { key: "account", label: "COMUNIDAD", items: user ? currentNavItems.filter((i) => i.group === "account") : [] },
+    { key: "settings", label: "CONFIGURACIÓN", items: currentNavItems.filter((i) => i.group === "settings") },
   ]
 
   return (
@@ -67,21 +73,28 @@ export function Sidebar() {
             <X className="w-5 h-5" />
           </button>
         </div>
-        <div className="py-2">
-          {groups.map((group, gi) => (
+        <div className="py-6 space-y-5">
+          {groups.map((group, gi) => group.items.length > 0 && (
             <div key={group.key}>
-              {group.items.map((item) => (
-                <button
-                  key={item.label}
-                  onClick={() => handleNav(item)}
-                  className="w-full text-left px-6 py-3 text-sm font-medium hover:bg-primary hover:text-primary-foreground transition-colors"
-                >
-                  {item.label}
-                </button>
-              ))}
-              {gi < groups.length - 1 && (
-                <div className="mx-4 my-1 border-t border-border" />
-              )}
+              <h3 className="px-6 mb-2 text-[10px] font-black tracking-[0.3em] text-muted-foreground/40 uppercase">
+                {group.label}
+              </h3>
+              <div className="space-y-1 px-3">
+                {group.items.map((item) => (
+                  <a
+                    key={item.label}
+                    href="#"
+                    onClick={(e) => { e.preventDefault(); handleNav(item); }}
+                    className="w-full text-left px-5 py-2.5 rounded-2xl text-sm font-bold flex items-center gap-4 transition-all hover:bg-primary/10 hover:text-primary group relative overflow-hidden active:scale-95 select-none"
+                  >
+                    <div className="w-9 h-9 rounded-xl bg-muted flex items-center justify-center group-hover:bg-primary group-hover:text-primary-foreground transition-all shrink-0">
+                      {item.icon && <item.icon className="w-5 h-5 shrink-0" />}
+                    </div>
+                    <span className="tracking-tight uppercase text-xs truncate">{item.label}</span>
+                    <div className="absolute left-0 w-1.5 h-0 bg-primary group-hover:h-8 top-1/2 -translate-y-1/2 rounded-full transition-all" />
+                  </a>
+                ))}
+              </div>
             </div>
           ))}
         </div>

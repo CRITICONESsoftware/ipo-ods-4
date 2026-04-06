@@ -73,37 +73,42 @@ export function DonationsPage() {
                 <Phone className="w-4 h-4 text-primary" />
                 <span className="font-medium mr-1">Teléfono:</span> {org.phone}
               </a>
-              <button 
-                onClick={() => handleInfo(org.mapsUrl)}
-                className="flex items-center gap-2 text-sm text-foreground hover:text-primary transition-colors text-left"
+              <a 
+                href={org.mapsUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-start sm:items-center gap-2 text-sm text-foreground hover:text-primary transition-colors text-left"
               >
-                <MapPin className="w-4 h-4 text-primary" />
-                <span className="font-medium mr-1">Localización:</span> {org.location}
-              </button>
+                <MapPin className="w-4 h-4 text-primary shrink-0 mt-0.5 sm:mt-0" />
+                <span><span className="font-medium">Localización:</span> {org.location}</span>
+              </a>
             </div>
 
-            <div className="flex flex-wrap gap-3">
-              <button 
-                onClick={() => handleDonate(org.name)}
-                className="flex-1 min-w-[120px] inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-primary text-primary-foreground rounded-xl hover:bg-primary/90 hover:shadow-md transition-all text-sm font-semibold"
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-4">
+              <a 
+                href="#"
+                onClick={(e) => { e.preventDefault(); handleDonate(org.name); }}
+                className="w-full inline-flex items-center justify-center gap-2 px-5 py-3 bg-primary text-primary-foreground rounded-xl hover:bg-primary/90 hover:scale-[1.02] active:scale-[0.98] hover:shadow-md transition-all text-sm font-semibold select-none"
               >
-                <Heart className="w-4 h-4 fill-primary-foreground" />
-                Donar ahora
-              </button>
-              <button 
-                onClick={() => handleInfo(org.mapsUrl)}
-                className="flex-1 min-w-[120px] inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-secondary text-secondary-foreground rounded-xl hover:bg-secondary/80 transition-all text-sm font-semibold border border-border"
+                <Heart className="w-4 h-4 fill-primary-foreground shrink-0" />
+                <span className="truncate">Donar ahora</span>
+              </a>
+              <a 
+                href={org.mapsUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-full inline-flex items-center justify-center gap-2 px-5 py-3 bg-secondary text-secondary-foreground rounded-xl hover:bg-secondary/80 hover:scale-[1.02] active:scale-[0.98] transition-all text-sm font-semibold border border-border select-none"
               >
-                <Info className="w-4 h-4" />
-                Saber más
-                <ExternalLink className="w-3 h-3 opacity-50" />
-              </button>
+                <Info className="w-4 h-4 shrink-0" />
+                <span className="truncate">Saber más</span>
+                <ExternalLink className="w-3 h-3 opacity-50 shrink-0" />
+              </a>
             </div>
           </div>
         ))}
       </div>
 
-      <div className="mt-12 p-6 bg-muted/50 rounded-2xl border border-dashed border-border text-center">
+      <div className="mt-12 mb-20 p-6 bg-muted/50 rounded-2xl border border-dashed border-border text-center">
         <p className="text-xs text-muted-foreground italic">
           * Esta página es una simulación de interfaz. Los botones de donación no procesan pagos reales.
         </p>

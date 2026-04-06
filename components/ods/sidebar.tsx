@@ -2,11 +2,13 @@
 
 import { X, LayoutDashboard, Home, BookOpen, GraduationCap, DollarSign, User, MessageCircle, Settings, HelpCircle, ShieldAlert } from "lucide-react"
 import { useApp } from "@/lib/app-context"
-import type { ReactNode } from "react"
+import Link from "next/link"
+import { useRouter } from "next/navigation"
 
 interface NavItem {
   label: string
-  page: string
+  href: string
+  page?: string
   group?: string
   icon?: any
 }

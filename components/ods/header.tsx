@@ -3,6 +3,7 @@
 import { Menu, Sun, Moon, LogIn, LogOut, User as UserIcon } from "lucide-react"
 import { useTheme } from "next-themes"
 import { useApp } from "@/lib/app-context"
+import Link from "next/link"
 
 export function Header() {
   const { theme, setTheme } = useTheme()

@@ -110,8 +110,6 @@ const TRANSLATIONS = {
 }
 
 interface AppContextType {
-  currentPage: Page
-  setCurrentPage: (page: Page) => void
   sidebarOpen: boolean
   setSidebarOpen: (open: boolean) => void
   tutorialStep: number
@@ -179,7 +177,6 @@ const DEFAULT_ACCESSIBILITY: AccessibilitySettings = {
 }
 
 export function AppProvider({ children }: { children: ReactNode }) {
-  const [currentPage, setCurrentPage] = useState<Page>("tutorial")
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const [tutorialStep, setTutorialStep] = useState(0)
   const [showTutorial, setShowTutorial] = useState(true)
@@ -393,8 +390,6 @@ export function AppProvider({ children }: { children: ReactNode }) {
   return (
     <AppContext.Provider
       value={{
-        currentPage,
-        setCurrentPage,
         sidebarOpen,
         setSidebarOpen,
         tutorialStep,

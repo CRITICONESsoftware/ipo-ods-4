@@ -2,6 +2,8 @@ import type { Metadata, Viewport } from 'next'
 import { Inter } from 'next/font/google'
 import { Analytics } from '@vercel/analytics/next'
 import { ThemeProvider } from '@/components/theme-provider'
+import { AppProvider } from '@/lib/app-context'
+import { ClientLayout } from '@/components/ods/client-layout'
 import './globals.css'
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" })
@@ -29,7 +31,11 @@ export default function RootLayout({
     <html lang="es" suppressHydrationWarning>
       <body className={`${inter.variable} font-sans antialiased`}>
         <ThemeProvider attribute="class" defaultTheme="light" enableSystem={false}>
-          {children}
+          <AppProvider>
+            <ClientLayout>
+              {children}
+            </ClientLayout>
+          </AppProvider>
         </ThemeProvider>
         <Analytics />
       </body>

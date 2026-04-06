@@ -4,10 +4,12 @@ import { Menu, Sun, Moon, LogIn, LogOut, User as UserIcon } from "lucide-react"
 import { useTheme } from "next-themes"
 import { useApp } from "@/lib/app-context"
 import Link from "next/link"
+import { useRouter } from "next/navigation"
 
 export function Header() {
   const { theme, setTheme } = useTheme()
-  const { setSidebarOpen, sidebarOpen, user, logout, setCurrentPage } = useApp()
+  const { setSidebarOpen, sidebarOpen, user, logout } = useApp()
+  const router = useRouter()
 
   return (
     <header className="flex items-center justify-between px-4 py-2 bg-primary text-primary-foreground shadow-md sticky top-0 z-30">
@@ -20,7 +22,7 @@ export function Header() {
           <Menu className="w-6 h-6" />
         </button>
 
-        <div className="flex items-center gap-2 cursor-pointer group" onClick={() => setCurrentPage("home")}>
+        <div className="flex items-center gap-2 cursor-pointer group" onClick={() => router.push("/")}>
           <div className="w-9 h-9 rounded-xl bg-white flex items-center justify-center shadow-lg transform group-hover:rotate-6 transition-transform">
             <img
               src="/icon.webp"
@@ -61,7 +63,7 @@ export function Header() {
               </span>
             </div>
             <button 
-              onClick={() => setCurrentPage("profile")}
+              onClick={() => router.push("/profile")}
               className="w-9 h-9 rounded-xl bg-white/10 border border-white/20 flex items-center justify-center font-black text-sm hover:bg-white/20 transition-all group overflow-hidden"
             >
               {user.avatar ? (
@@ -81,7 +83,7 @@ export function Header() {
           </div>
         ) : (
           <button
-            onClick={() => setCurrentPage("login")}
+            onClick={() => router.push("/login")}
             className="flex items-center gap-2 bg-white text-primary px-4 py-2 rounded-xl font-black text-sm shadow-lg hover:shadow-white/20 transition-all active:scale-95 group"
           >
             <LogIn className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />

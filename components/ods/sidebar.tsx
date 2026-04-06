@@ -7,43 +7,43 @@ import { useRouter } from "next/navigation"
 
 interface NavItem {
   label: string
-  href?: string
-  page?: string
+  href: string
   group?: string
   icon?: any
 }
 
 const navItems: NavItem[] = [
-  { label: "Inicio", page: "home", group: "info", icon: Home },
-  { label: "Informes", page: "home", group: "info", icon: BookOpen },
-  { label: "Donaciones", page: "donations", group: "info", icon: DollarSign },
-  { label: "Cuestionarios", page: "quiz", group: "interactive", icon: GraduationCap },
-  { label: "Videos", page: "video", group: "interactive", icon: GraduationCap },
-  { label: "Mi cuenta", page: "profile", group: "account", icon: User },
-  { label: "Foro", page: "forum", group: "account", icon: MessageCircle },
-  { label: "Accesibilidad", page: "accessibility", group: "settings", icon: Settings },
-  { label: "Tutorial", page: "tutorial", group: "settings", icon: HelpCircle },
+  { label: "Inicio", href: "/", group: "info", icon: Home },
+  { label: "Informes", href: "/", group: "info", icon: BookOpen },
+  { label: "Donaciones", href: "/donations", group: "info", icon: DollarSign },
+  { label: "Cuestionarios", href: "/quiz", group: "interactive", icon: GraduationCap },
+  { label: "Videos", href: "/video", group: "interactive", icon: GraduationCap },
+  { label: "Mi cuenta", href: "/profile", group: "account", icon: User },
+  { label: "Foro", href: "/forum", group: "account", icon: MessageCircle },
+  { label: "Accesibilidad", href: "/accessibility", group: "settings", icon: Settings },
+  { label: "Tutorial", href: "/", group: "settings", icon: HelpCircle },
 ]
 
 export function Sidebar() {
-  const { sidebarOpen, setSidebarOpen, setCurrentPage, setShowTutorial, setTutorialStep, user } = useApp()
+  const { sidebarOpen, setSidebarOpen, setShowTutorial, setTutorialStep, user } = useApp()
+  const router = useRouter()
 
   if (!sidebarOpen) return null
 
   const handleNav = (item: NavItem) => {
-    if (item.page === "tutorial") {
+    if (item.label === "Tutorial") {
       setShowTutorial(true)
       setTutorialStep(0)
-      setCurrentPage("home")
+      router.push("/")
     } else {
-      setCurrentPage(item.page as any)
+      router.push(item.href)
     }
     setSidebarOpen(false)
   }
 
   const currentNavItems = [...navItems]
   if (user?.role === "admin") {
-    currentNavItems.push({ label: "Administración", page: "admin", group: "settings", icon: ShieldAlert })
+    currentNavItems.push({ label: "Administración", href: "/admin", group: "settings", icon: ShieldAlert })
   }
 
   const groups = [

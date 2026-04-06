@@ -1,6 +1,6 @@
 "use client"
 
-import { createContext, useContext, useState, type ReactNode } from "react"
+import { createContext, useContext, useState, useEffect, type ReactNode } from "react"
 
 
 export interface AccessibilitySettings {
@@ -56,7 +56,21 @@ const AppContext = createContext<AppContextType | null>(null)
 export function AppProvider({ children }: { children: ReactNode }) {
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const [tutorialStep, setTutorialStep] = useState(0)
-  const [showTutorial, setShowTutorial] = useState(true)
+  const [showTutorial, setShowTutorialState] = useState(false)
+
+  useEffect(() => {
+    const tutorialShown = localStorage.getItem("tutorialShown")
+    if (!tutorialShown) {
+      setShowTutorialState(true)
+    }
+  }, [])
+
+  const setShowTutorial = (show: boolean) => {
+    setShowTutorialState(show)
+    if (!show) {
+      localStorage.setItem("tutorialShown", "true")
+    }
+  }
   const [profileTab, setProfileTab] = useState<"info" | "notifications" | "progress">("info")
   const [user, setUserState] = useState<UserProfile>({
     name: "Alex García",

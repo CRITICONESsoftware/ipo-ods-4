@@ -21,7 +21,7 @@ const navItems: NavItem[] = [
   { label: "Mi cuenta", href: "/profile", group: "account" },
   { label: "Foro", href: "/forum", group: "account" },
   { label: "Opciones de accesibilidad", href: "/accessibility", group: "settings" },
-  { label: "Tutorial de uso", href: "/", page: "tutorial", group: "settings" },
+  { label: "Tutorial de uso", href: "", page: "tutorial", group: "settings" },
 ]
 
 export function Sidebar() {
@@ -70,19 +70,41 @@ export function Sidebar() {
         <div className="py-2">
           {groups.map((group, gi) => (
             <div key={group.key}>
-              {group.items.map((item) => (
-                <Link
-                  key={item.label}
-                  href={item.href}
-                  onClick={() => handleNav(item)}
-                  className="w-full text-left px-6 py-3 text-sm font-medium hover:bg-primary hover:text-primary-foreground transition-colors flex items-center justify-between"
-                >
-                  {item.label}
-                  {item.href === "/profile" && notifications.some(n => !n.read) && (
-                    <span className="w-2 h-2 bg-destructive rounded-full" />
-                  )}
-                </Link>
-              ))}
+              {group.items.map((item) => {
+                const isTutorial = item.page === "tutorial"
+                const content = (
+                  <>
+                    {item.label}
+                    {item.href === "/profile" && notifications.some(n => !n.read) && (
+                      <span className="w-2 h-2 bg-destructive rounded-full" />
+                    )}
+                  </>
+                )
+                const className = "w-full text-left px-6 py-3 text-sm font-medium hover:bg-primary hover:text-primary-foreground transition-colors flex items-center justify-between"
+
+                if (isTutorial) {
+                  return (
+                    <button
+                      key={item.label}
+                      onClick={() => handleNav(item)}
+                      className={className}
+                    >
+                      {content}
+                    </button>
+                  )
+                }
+
+                return (
+                  <Link
+                    key={item.label}
+                    href={item.href}
+                    onClick={() => handleNav(item)}
+                    className={className}
+                  >
+                    {content}
+                  </Link>
+                )
+              })}
               {gi < groups.length - 1 && (
                 <div className="mx-4 my-1 border-t border-border" />
               )}

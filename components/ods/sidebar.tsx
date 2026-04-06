@@ -7,7 +7,7 @@ import { useRouter } from "next/navigation"
 
 interface NavItem {
   label: string
-  href: string
+  href?: string
   page?: string
   group?: string
   icon?: any

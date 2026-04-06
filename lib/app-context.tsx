@@ -116,6 +116,8 @@ interface AppContextType {
   setTutorialStep: (step: number) => void
   showTutorial: boolean
   setShowTutorial: (show: boolean) => void
+  currentPage: Page
+  setCurrentPage: (page: Page) => void
   profileTab: "info" | "notifications" | "progress"
   setProfileTab: (tab: "info" | "notifications" | "progress") => void
   accessibility: AccessibilitySettings
@@ -180,6 +182,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const [tutorialStep, setTutorialStep] = useState(0)
   const [showTutorial, setShowTutorial] = useState(true)
+  const [currentPage, setCurrentPage] = useState<Page>("tutorial")
   const [profileTab, setProfileTab] = useState<"info" | "notifications" | "progress">("info")
   const [user, setUserState] = useState<User | null>(null)
   const [token, setToken] = useState<string | null>(null)
@@ -396,6 +399,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
         setTutorialStep,
         showTutorial,
         setShowTutorial,
+        currentPage,
+        setCurrentPage,
         profileTab,
         setProfileTab,
         accessibility,

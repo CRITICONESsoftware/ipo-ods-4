@@ -1,5 +1,6 @@
 import { useState } from "react"
 import { useApp } from "@/lib/app-context"
+import { useRouter } from "next/navigation"
 import { 
   ArrowLeft, Eye, Ear, Pointer, Type, Square, ZoomIn, 
   Palette, Contrast, Volume2, Headphones, MessageSquare, 
@@ -12,6 +13,7 @@ export const fontSizes = [10, 12, 14, 16, 18, 20, 22]
 
 export function AccessibilityPage() {
   const { setCurrentPage, accessibility, setAccessibility, t } = useApp()
+  const router = useRouter()
   const [activeOption, setActiveOption] = useState<string | null>(null)
 
   const handleToggle = (setting: string) => {
@@ -103,7 +105,7 @@ export function AccessibilityPage() {
 
           <a 
             href="#"
-            onClick={(e) => { e.preventDefault(); setCurrentPage("home"); }}
+            onClick={(e) => { e.preventDefault(); router.push("/"); }}
             className="mt-2 px-5 py-2 rounded-xl bg-card border-2 border-border hover:bg-muted text-foreground transition-all font-black uppercase text-[10px] tracking-widest flex items-center gap-2 active:scale-95 select-none"
           >
             <ArrowLeft size={14} className="stroke-[3px]" /> {t('back')}

@@ -1,6 +1,6 @@
 "use client"
 
-import { X, LayoutDashboard, Home, BookOpen, GraduationCap, DollarSign, User, MessageCircle, Settings, HelpCircle, ShieldAlert } from "lucide-react"
+import { X, LayoutDashboard, Home, BookOpen, GraduationCap, DollarSign, User, MessageCircle, Settings, HelpCircle, ShieldAlert, Video } from "lucide-react"
 import { useApp } from "@/lib/app-context"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
@@ -17,7 +17,7 @@ const navItems: NavItem[] = [
   { label: "Informes", href: "/", group: "info", icon: BookOpen },
   { label: "Donaciones", href: "/donations", group: "info", icon: DollarSign },
   { label: "Cuestionarios", href: "/quiz", group: "interactive", icon: GraduationCap },
-  { label: "Videos", href: "/video", group: "interactive", icon: GraduationCap },
+  { label: "Videos", href: "/video", group: "interactive", icon: Video },
   { label: "Mi cuenta", href: "/profile", group: "account", icon: User },
   { label: "Foro", href: "/forum", group: "account", icon: MessageCircle },
   { label: "Accesibilidad", href: "/accessibility", group: "settings", icon: Settings },

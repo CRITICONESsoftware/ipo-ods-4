@@ -133,8 +133,6 @@
     /* Use strong dynamic margins to push surrounding elements and thoroughly prevent overlap both vertically and horizontally */
     margin-top: calc((var(--scale) - 1) * 1.5rem) !important;
     margin-bottom: calc((var(--scale) - 1) * 1.5rem) !important;
-    margin-left: calc((var(--scale) - 1) * 1.25rem) !important;
-    margin-right: calc((var(--scale) - 1) * 1.25rem) !important;
     /* Adjust width to avoid horizontal overflow */
     max-width: calc(100% / var(--scale)) !important;
     transition:

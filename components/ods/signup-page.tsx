@@ -2,10 +2,12 @@
 
 import { useState } from "react"
 import { useApp } from "@/lib/app-context"
+import { useRouter } from "next/navigation"
 import { User, Mail, Lock, UserPlus, CheckCircle2, ShieldCheck, ArrowRight } from "lucide-react"
 
 export function SignupPage() {
   const { signup, setCurrentPage } = useApp()
+  const router = useRouter()
   const [name, setName] = useState("")
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
@@ -15,6 +17,7 @@ export function SignupPage() {
     e.preventDefault()
     if (name && email && password) {
       signup({ name, email, role: "visitor", avatar: name.charAt(0).toUpperCase() })
+      router.push("/")
     } else {
       setError("Por favor rellena todos los campos")
     }
@@ -114,13 +117,15 @@ export function SignupPage() {
               <p className="text-destructive text-[11px] bg-destructive/10 p-2 rounded-md font-bold">{error}</p>
             )}
 
-            <button
-              type="submit"
-              className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-bold py-2.5 rounded-lg shadow-md hover:shadow-primary/30 transition-all flex items-center justify-center gap-2 group text-sm active:scale-[0.98]"
-            >
-              Registrarse
-              <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-            </button>
+            <div className="w-full flex justify-center py-2">
+              <button
+                type="submit"
+                className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-bold py-2.5 rounded-lg shadow-md hover:shadow-primary/30 transition-all flex items-center justify-center gap-2 group text-sm active:scale-[0.98]"
+              >
+                Registrarse
+                <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+              </button>
+            </div>
           </form>
 
           <p className="mt-6 text-[11px] text-center text-muted-foreground">
@@ -131,12 +136,12 @@ export function SignupPage() {
           <div className="mt-4 pt-4 border-t border-border/50 text-center">
             <p className="text-[11px] text-muted-foreground">
               ¿Ya tienes cuenta?{" "}
-              <button
-                onClick={() => setCurrentPage("login")}
-                className="text-primary font-bold hover:underline"
+              <span
+                onClick={() => router.push("/login")}
+                className="text-primary font-bold hover:underline cursor-pointer"
               >
                 Inicia sesión
-              </button>
+              </span>
             </p>
           </div>
         </div>

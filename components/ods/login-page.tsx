@@ -2,10 +2,12 @@
 
 import { useState } from "react"
 import { useApp } from "@/lib/app-context"
+import { useRouter } from "next/navigation"
 import { Mail, Lock, LogIn, ArrowRight, AlertCircle } from "lucide-react"
 
 export function LoginPage() {
   const { login, setCurrentPage } = useApp()
+  const router = useRouter()
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [error, setError] = useState("")
@@ -14,8 +16,8 @@ export function LoginPage() {
     e.preventDefault()
     console.log("Form submitted with:", email)
     if (login(email, password)) {
-      console.log("Login call returned true")
       setError("")
+      router.push("/")
     } else {
       console.log("Login call returned false")
       setError("Email o contraseña incorrectos. Por favor, inténtalo de nuevo.")
@@ -79,24 +81,26 @@ export function LoginPage() {
               </div>
             )}
 
-            <button
-              type="submit"
-              className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-bold py-3.5 rounded-2xl shadow-lg hover:shadow-primary/30 transition-all flex items-center justify-center gap-2 group active:scale-[0.98]"
-            >
-              Iniciar Sesión
-              <LogIn className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-            </button>
+            <div className="w-full flex justify-center py-2">
+              <button
+                type="submit"
+                className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-bold py-3.5 rounded-2xl shadow-lg hover:shadow-primary/30 transition-all flex items-center justify-center gap-2 group active:scale-[0.98]"
+              >
+                Iniciar Sesión
+                <LogIn className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+              </button>
+            </div>
           </form>
 
           <div className="mt-8 pt-6 border-t border-border/50 text-center">
             <p className="text-sm text-muted-foreground">
               ¿No tienes una cuenta?{" "}
-              <button
-                onClick={() => setCurrentPage("signup")}
-                className="text-primary font-bold hover:underline transition-all"
+              <span
+                onClick={() => router.push("/signup")}
+                className="text-primary font-bold hover:underline transition-all cursor-pointer inline-block"
               >
                 Regístrate gratis
-              </button>
+              </span>
             </p>
           </div>
         </div>

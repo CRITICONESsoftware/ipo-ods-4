@@ -22,7 +22,7 @@ export function HomePage() {
       })
     } catch (error) {
       if ((error as Error).name === "NotAllowedError" || (error as Error).name === "SecurityError") {
-        await navigator.clipboard.writeText(window.location.href).catch(() => {})
+        await navigator.clipboard.writeText(window.location.href).catch(() => { })
         toast({
           title: "¡Enlace Copiado!",
           description: "Hemos guardado el enlace directo en tu portapapeles.",
@@ -52,11 +52,11 @@ export function HomePage() {
           </p>
 
           <button
-            className="inline-flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-md hover:bg-[#0080b8] transition-colors text-sm font-medium disabled:opacity-50"
+            className="inline-flex items-center justify-center gap-3 px-6 py-3 bg-primary text-primary-foreground rounded-xl hover:bg-[#0080b8] transition-all text-base font-bold shadow-md hover:shadow-lg disabled:opacity-50 active:scale-95"
             onClick={handleShare}
             disabled={isSharing}
           >
-            {isSharing ? "Compartiendo..." : "Compartir"} <Share2 className="w-4 h-4" />
+            {isSharing ? "Compartiendo..." : "Compartir"} <Share2 className="w-5 h-5 shrink-0" />
           </button>
         </div>
 

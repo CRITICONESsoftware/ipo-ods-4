@@ -77,21 +77,22 @@ export function ForumPage() {
         ))}
       </div>
 
-      {/* New message input */}
-      <div className="flex gap-2">
+      {/* New message input container with extra padding for scaled buttons */}
+      <div className="flex flex-col sm:flex-row gap-4 mt-8 pb-4">
         <input
           type="text"
           value={newMessage}
           onChange={(e) => setNewMessage(e.target.value)}
           onKeyDown={(e) => e.key === "Enter" && handleSend()}
           placeholder="Escribe un mensaje..."
-          className="flex-1 px-4 py-3 bg-card text-foreground border-2 border-primary rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+          className="flex-1 px-6 py-4 bg-card text-foreground border-2 border-primary rounded-2xl focus:outline-none focus:ring-4 focus:ring-primary/20 min-h-[3rem]"
         />
         <button
           onClick={handleSend}
-          className="px-4 py-3 bg-primary text-primary-foreground rounded-lg hover:bg-[#0080b8] transition-colors"
+          className="px-8 py-4 bg-primary text-primary-foreground rounded-2xl hover:bg-[#0080b8] transition-all shadow-lg active:scale-95 flex items-center justify-center gap-2"
           aria-label="Enviar mensaje"
         >
+          <span className="font-bold sm:hidden">ENVIAR</span>
           <Send className="w-5 h-5" />
         </button>
       </div>

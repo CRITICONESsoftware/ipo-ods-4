@@ -1,7 +1,8 @@
 "use client"
 
-import { Paperclip, Send } from "lucide-react"
+import { Paperclip, Pencil, Send } from "lucide-react"
 import { useState } from "react"
+import { useApp } from "@/lib/app-context"
 
 const initialPosts = [
   {
@@ -10,7 +11,7 @@ const initialPosts = [
     author: "",
     content:
       "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras nec nunc ac augue eleifend eleifend vitae nec nunc. Phasellus mauris dui, dictum ac arcu ac, venenatis imperdiet mi.",
-    isCurrentUser: true,
+    isCurrentUser: false,
   },
   {
     id: 2,
@@ -23,6 +24,7 @@ const initialPosts = [
 ]
 
 export function ForumPage() {
+  const { user } = useApp()
   const [posts, setPosts] = useState(initialPosts)
   const [newMessage, setNewMessage] = useState("")
 
@@ -33,7 +35,7 @@ export function ForumPage() {
         {
           id: posts.length + 1,
           title: "",
-          author: "",
+          author: "@" + user?.name + " [Tú]" || "Usuario [Tú]",
           content: newMessage,
           isCurrentUser: true,
         },
@@ -63,12 +65,10 @@ export function ForumPage() {
               <p className="text-foreground leading-relaxed">{post.content}</p>
 
               {post.isCurrentUser && (
-                <div className="flex justify-end gap-2 mt-3">
-                  <button className="text-muted-foreground hover:text-foreground transition-colors" aria-label="Adjuntar">
-                    <Paperclip className="w-5 h-5" />
-                  </button>
-                  <button className="text-muted-foreground hover:text-foreground transition-colors" aria-label="Enviar">
-                    <Send className="w-5 h-5" />
+                <div className="flex justify-end gap-2 mt-3 mr-5">
+                  <button className="flex items-center gap-1 text-muted-foreground hover:text-foreground transition-colors text-xs font-medium" aria-label="Editar publicación">
+                    <Pencil className="w-4 h-4" />
+                    <span>Editar</span>
                   </button>
                 </div>
               )}
@@ -77,23 +77,30 @@ export function ForumPage() {
         ))}
       </div>
 
-      {/* New message input container with extra padding for scaled buttons */}
-      <div className="flex flex-col sm:flex-row gap-4 mt-8 pb-4">
+      {/* New message input */}
+      <div className="flex gap-2 lg:gap-4 items-center justify-start">
         <input
           type="text"
           value={newMessage}
           onChange={(e) => setNewMessage(e.target.value)}
           onKeyDown={(e) => e.key === "Enter" && handleSend()}
           placeholder="Escribe un mensaje..."
-          className="flex-1 px-6 py-4 bg-card text-foreground border-2 border-primary rounded-2xl focus:outline-none focus:ring-4 focus:ring-primary/20 min-h-[3rem]"
+          className="flex-1 max-w-[30rem] px-3 py-2 bg-card text-foreground border-2 border-primary rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-sm"
         />
         <button
+          className="flex items-center gap-1 px-3 py-2 text-foreground hover:text-primary transition-colors text-[11px] font-medium whitespace-nowrap"
+          aria-label="Adjuntar"
+        >
+          <Paperclip className="w-4 h-4" />
+          <span>Adjuntar</span>
+        </button>
+        <button
           onClick={handleSend}
-          className="px-8 py-4 bg-primary text-primary-foreground rounded-2xl hover:bg-[#0080b8] transition-all shadow-lg active:scale-95 flex items-center justify-center gap-2"
+          className="ml-4 flex items-center gap-1 px-3 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-[#0080b8] transition-colors text-[11px] font-medium whitespace-nowrap"
           aria-label="Enviar mensaje"
         >
-          <span className="font-bold sm:hidden">ENVIAR</span>
-          <Send className="w-5 h-5" />
+          <Send className="w-4 h-4" />
+          <span>Enviar</span>
         </button>
       </div>
     </main>

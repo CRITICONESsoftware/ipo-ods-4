@@ -17,8 +17,8 @@ export function ProfilePage() {
 
   if (!user) {
     return (
-      <main className="min-h-[70vh] flex items-center justify-center p-8">
-        <div className="bg-card border-2 border-dashed border-border rounded-3xl p-12 text-center max-w-sm animate-in fade-in zoom-in duration-500">
+      <main className="min-h-[70vh] flex items-center justify-center p-4 sm:p-8">
+        <div className="w-full max-w-md bg-card border-2 border-dashed border-border rounded-3xl p-8 sm:p-12 text-center animate-in fade-in zoom-in duration-500 [--button-scale:1]">
           <div className="w-20 h-20 bg-muted rounded-full flex items-center justify-center mx-auto mb-6">
             <UserIcon className="w-10 h-10 text-muted-foreground" />
           </div>
@@ -26,7 +26,7 @@ export function ProfilePage() {
           <p className="text-muted-foreground font-medium mb-8">Inicia sesión para ver y gestionar tu perfil personal.</p>
           <button 
             onClick={() => setCurrentPage("login")}
-            className="w-full bg-primary text-primary-foreground font-black py-4 rounded-2xl shadow-lg shadow-primary/20 hover:shadow-primary/40 transition-all flex items-center justify-center gap-2 group"
+            className="w-full !m-0 bg-primary text-primary-foreground font-black py-4 rounded-2xl shadow-lg shadow-primary/20 hover:shadow-primary/40 transition-all flex items-center justify-center gap-2 group"
           >
             <LogIn className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
             IR AL LOGIN
@@ -66,12 +66,12 @@ export function ProfilePage() {
               <Mail size={14} className="text-primary" /> {user.email}
             </div>
             <div className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wide">
-              <Calendar size={14} className="text-primary" /> Miembro desde 2024
+              <Calendar size={14} className="text-primary" /> Miembro desde 2026
             </div>
           </div>
         </div>
 
-        <div className="flex gap-2">
+        <div className="flex flex-1 gap-2 items-center justify-center md:justify-end">
           <button
             onClick={() => setProfileTab(profileTab === "notifications" ? "info" : "notifications")}
             className={`p-4 rounded-2xl transition-all shadow-md active:scale-95 border-2 ${
@@ -89,12 +89,12 @@ export function ProfilePage() {
       {/* Tabs Layout */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
         {/* Left Column - Navigation */}
-        <div className="lg:col-span-1 bg-card border-2 border-border rounded-3xl p-3 flex flex-col gap-2 shadow-lg">
+        <div className="lg:col-span-1 bg-card border-2 border-border rounded-3xl p-3 flex flex-col gap-2 shadow-lg [--button-scale:1]">
           {(["info", "notifications", "progress"] as const).map((tab) => (
             <button
               key={tab}
               onClick={() => setProfileTab(tab)}
-              className={`flex items-center gap-3 px-6 py-4 rounded-2xl text-sm font-black uppercase tracking-widest transition-all active:scale-[0.98] ${
+              className={`w-full box-border flex items-center gap-3 px-6 py-4 rounded-2xl text-sm font-black uppercase tracking-widest transition-all active:scale-[0.98] ${
                 profileTab === tab
                   ? "bg-primary text-primary-foreground shadow-lg shadow-primary/20"
                   : "hover:bg-muted text-muted-foreground"
@@ -137,8 +137,8 @@ export function ProfilePage() {
             </div>
           )}
 
-          {profileTab === "notifications" && (
-             <div className="bg-card border-2 border-border rounded-[2rem] overflow-hidden shadow-xl animate-in slide-in-from-bottom-4 duration-500">
+           {profileTab === "notifications" && (
+             <div className="bg-card border-2 border-border rounded-[2rem] overflow-hidden shadow-xl animate-in slide-in-from-bottom-4 duration-500 [--button-scale:1]">
                <div className="p-8">
                 <div className="flex items-center gap-3 mb-6">
                   <div className="w-2 h-8 bg-[#fcc30b] rounded-full" />
@@ -150,7 +150,7 @@ export function ProfilePage() {
                     <button 
                       key={notif.id} 
                       onClick={() => setCurrentPage(notif.href)}
-                      className="w-full text-left bg-[#fcc30b]/5 border-2 border-[#fcc30b]/20 p-6 rounded-3xl relative overflow-hidden group hover:border-[#fcc30b] transition-all active:scale-[0.99]"
+                      className="w-full !m-0 box-border text-left bg-[#fcc30b]/5 border-2 border-[#fcc30b]/20 p-6 rounded-3xl relative overflow-hidden group hover:border-[#fcc30b] transition-all active:scale-[0.99]"
                     >
                       <div className="absolute top-0 right-0 p-2 bg-[#fcc30b] text-primary rounded-bl-2xl">
                         <ShieldCheck size={14} />

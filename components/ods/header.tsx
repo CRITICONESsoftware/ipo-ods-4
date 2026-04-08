@@ -1,9 +1,8 @@
 "use client"
 
-import { Menu, Sun, Moon, LogIn, LogOut, User as UserIcon } from "lucide-react"
+import { Menu, Sun, Moon, LogOut, User as UserIcon } from "lucide-react"
 import { useTheme } from "next-themes"
 import { useApp } from "@/lib/app-context"
-import Link from "next/link"
 import { useRouter } from "next/navigation"
 
 export function Header() {
@@ -12,7 +11,7 @@ export function Header() {
   const router = useRouter()
 
   return (
-    <header className="flex items-center justify-between px-4 py-2 bg-primary text-primary-foreground shadow-md sticky top-0 z-30">
+    <header className="flex items-center justify-between pl-4 pr-8 py-2 bg-primary text-primary-foreground shadow-md sticky top-0 z-30">
       <div className="flex items-center gap-4">
         <button
           onClick={() => setSidebarOpen(!sidebarOpen)}
@@ -39,7 +38,7 @@ export function Header() {
         </div>
       </div>
 
-      <div className="flex items-center gap-2 md:gap-4">
+      <div className="flex items-center gap-2 lg:gap-4 md:gap-4">
         <button
           onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
           className="p-2 rounded-xl bg-white/10 hover:bg-white/20 transition-all active:scale-95 border border-white/5"
@@ -51,42 +50,33 @@ export function Header() {
         <div className="h-8 w-[1px] bg-white/10 mx-1 hidden xs:block" />
 
         {user ? (
-          <div className="flex items-center gap-3">
-            <div className="hidden md:flex flex-col items-end">
-              <span className="text-[11px] font-black uppercase tracking-tight leading-none mb-1">{user.name}</span>
-              <span className={`text-[10px] font-black uppercase tracking-widest px-2 py-0.5 rounded-md border ${user.role === 'admin'
-                  ? 'bg-[#fcc30b] text-primary border-[#fcc30b]/20 shadow-[0_0_10px_-4px_rgba(252,195,11,0.6)]'
-                  : 'bg-white/10 text-white border-white/20'
-                }`}>
-                {user.role}
-              </span>
-            </div>
+          <div className="ml-6 flex items-center gap-4">
             <button
               onClick={() => router.push("/profile")}
-              className="w-9 h-9 rounded-xl bg-white/10 border border-white/20 flex items-center justify-center font-black text-sm hover:bg-white/20 transition-all group overflow-hidden"
+              className="flex items-center gap-2 bg-white/10 border border-white/20 px-3 py-2 rounded-xl font-black text-[11px] sm:text-sm hover:bg-white/20 transition-all group whitespace-nowrap"
+              aria-label="Perfil"
+              title="Perfil"
             >
-              {user.avatar ? (
-                <span className="group-hover:scale-110 transition-transform">{user.avatar}</span>
-              ) : (
-                <UserIcon className="w-5 h-5 group-hover:scale-110 transition-transform" />
-              )}
+              <UserIcon className="w-4 h-4 group-hover:scale-110 transition-transform" />
+              <span>Perfil</span>
             </button>
             <button
               onClick={logout}
-              className="p-2 rounded-xl hover:bg-destructive hover:text-destructive-foreground transition-all active:scale-95"
+              className="ml-10 pl-8 border-l border-l-white/20 flex items-center gap-2 bg-white/10 border border-white/30 text-white px-2 sm:px-4 py-2 rounded-xl font-black text-[11px] sm:text-sm whitespace-nowrap shadow-lg hover:bg-destructive hover:border-destructive hover:text-destructive-foreground transition-all active:scale-95 group"
               aria-label="Cerrar sesión"
               title="Cerrar sesión"
             >
-              <LogOut className="w-5 h-5" />
+              <LogOut className="w-4 h-4 group-hover:-translate-x-0.5 transition-transform" />
+              <span>Cerrar sesión</span>
             </button>
           </div>
         ) : (
           <button
             onClick={() => router.push("/login")}
-            className="flex items-center gap-2 bg-white text-primary px-4 py-2 rounded-xl font-black text-sm shadow-lg hover:shadow-white/20 transition-all active:scale-95 group"
+            className="ml-6 mr-3 flex items-center gap-2 bg-white text-primary px-2 sm:px-4 py-2 rounded-xl font-black text-[11px] sm:text-sm whitespace-nowrap shadow-lg hover:shadow-white/20 transition-all active:scale-95 group"
           >
-            <LogIn className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
-            <span>INICIAR SESIÓN</span>
+            <UserIcon className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
+            <span>Iniciar sesión</span>
           </button>
         )}
       </div>

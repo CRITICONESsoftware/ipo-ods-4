@@ -40,17 +40,17 @@ export function AccessibilityPage() {
     if (option === "colorBlindMode") {
       return [
         { label: "None", value: "Ninguno", color: "bg-[#a21942]" },
-        { label: "Protan", value: "Protanopia", color: "bg-[#fd6925]" },
-        { label: "Deuter", value: "Deuteranopia", color: "bg-[#bf8b2e]" },
-        { label: "Tritan", value: "Tritanopia", color: "bg-[#407f46]" },
-        { label: "Achroma", value: "Acromatopsia", color: "bg-[#555555]" },
+        { label: "Protanopia", value: "Protanopia", color: "bg-[#fd6925]" },
+        { label: "Deuteranopia", value: "Deuteranopia", color: "bg-[#bf8b2e]" },
+        { label: "Tritanopia", value: "Tritanopia", color: "bg-[#407f46]" },
+        { label: "Acromatopsia", value: "Acromatopsia", color: "bg-[#555555]" },
       ]
     }
     if (option === "elementsLayout") {
       return [
-        { label: "Std", value: "Standard", color: "bg-[#0a97d9]" },
-        { label: "Cmp", value: "Compact", color: "bg-[#56c02b]" },
-        { label: "Grd", value: "Grid", color: "bg-[#00689d]" },
+        { label: "Standard", value: "Standard", color: "bg-[#0a97d9]" },
+        { label: "Compact", value: "Compact", color: "bg-[#56c02b]" },
+        { label: "Grid", value: "Grid", color: "bg-[#00689d]" },
       ]
     }
     if (option === "buttonSizeIndex") {
@@ -81,7 +81,7 @@ export function AccessibilityPage() {
       <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-primary/10 rounded-full blur-[100px] pointer-events-none" />
       <div className="absolute bottom-[-10%] right-[-10%] w-[30%] h-[30%] bg-accent/10 rounded-full blur-[100px] pointer-events-none" />
 
-      <div className="p-4 md:p-6 relative z-10 space-y-8 w-full max-w-5xl lg:max-w-[70%] mx-auto">
+      <div className="p-4 md:p-6 relative z-10 space-y-8 w-full max-w-5xl lg:max-w-[80%] xl:max-w-[82rem] mx-auto">
         {/* Header Section */}
         <div className="flex flex-col items-center gap-4 mb-8 text-center">
           <div className="relative group mx-auto mb-2">
@@ -114,7 +114,7 @@ export function AccessibilityPage() {
         </div>
 
         {/* Main Sections Grid */}
-        <div className="grid grid-cols-1 xl:grid-cols-2 2xl:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8">
 
           {/* Column 1: VISIÓN */}
           <section className="bg-card border-2 border-border rounded-3xl p-6 shadow-lg transition-all duration-300 hover:border-primary/40 group/card">
@@ -295,12 +295,12 @@ function AccessItem({
           }`}>
           {icon}
         </div>
-        <div className="flex-1 min-w-0 py-1">
-          <p className="font-[900] text-[15px] sm:text-[13px] uppercase tracking-tight leading-tight break-words">{label}</p>
+        <div className="flex-1 min-w-0">
+          <p className="font-[900] text-[13px] uppercase leading-snug tracking-tight whitespace-normal break-normal hyphens-none">{label}</p>
           {subtext && (
-            <div className="flex items-center gap-2 mt-2 opacity-60">
-              <div className="w-2 h-2 rounded-full bg-primary animate-pulse shrink-0" />
-              <p className="text-[11px] sm:text-[10px] font-black text-primary uppercase tracking-[0.15em] break-words">{subtext}</p>
+            <div className="flex items-center gap-2 mt-1.5 opacity-60 min-w-0">
+              <div className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse shrink-0" />
+              <p className="text-[10px] font-black text-primary uppercase tracking-[0.08em] whitespace-normal break-normal hyphens-none">{subtext}</p>
             </div>
           )}
         </div>

@@ -66,7 +66,7 @@ const TRANSLATIONS = {
     fontSize: "Tamaño de letra",
     buttonsSize: "Tamaño de botones",
     magnifier: "Lupa",
-    filters: "Filtros de color",
+    filters: "Modo daltonismo",
     contrast: "Temas de contraste",
     narrator: "Narrador",
     audio: "Audio",

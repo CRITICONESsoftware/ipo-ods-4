@@ -52,7 +52,7 @@ export function HomePage() {
           </p>
 
           <button
-            className="inline-flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-md hover:bg-[#0080b8] transition-colors text-sm font-medium disabled:opacity-50"
+            className="ml-6 mt-1 inline-flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-md hover:bg-[#0080b8] transition-colors text-sm font-medium disabled:opacity-50"
             onClick={handleShare}
             disabled={isSharing}
           >

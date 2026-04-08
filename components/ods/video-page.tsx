@@ -76,6 +76,7 @@ export function VideoPage() {
   const [currentTrack, setCurrentTrack] = useState<any>(null)
   const [showSettings, setShowSettings] = useState(false)
   const [settingsTab, setSettingsTab] = useState<'tracks' | 'size'>('tracks')
+  const [selectedFontSize, setSelectedFontSize] = useState(1)
   
   const progressRef = useRef<HTMLDivElement>(null)
   const playerRef = useRef<YTPlayer | null>(null)
@@ -341,6 +342,7 @@ export function VideoPage() {
   }
 
   const handleFontSizeChange = (size: number) => {
+    setSelectedFontSize(size)
     if (!playerRef.current) return
     playerRef.current.setOption?.("captions", "fontSize", size)
   }
@@ -490,7 +492,7 @@ export function VideoPage() {
                     max={100}
                     step={1}
                     onValueChange={(vals) => handleVolumeChange(vals[0])}
-                    className="cursor-pointer"
+                    className="cursor-pointer [&_[data-slot=slider-track]]:bg-white/75 [&_[data-slot=slider-range]]:bg-white/75 [&_[data-slot=slider-thumb]]:bg-white [&_[data-slot=slider-thumb]]:border-white"
                   />
                 </div>
               </div>
@@ -510,8 +512,8 @@ export function VideoPage() {
                 </button>
                 
                 {showSettings && (
-                  <div className="absolute bottom-full right-0 mb-4 w-72 bg-card border-2 border-primary rounded-2xl shadow-2xl p-4 z-50 text-foreground animate-in slide-in-from-bottom-2 duration-300">
-                    <div className="flex items-center justify-between mb-4">
+                  <div className="fixed top-1/2 left-1/2 z-50 w-[min(24rem,calc(100vw-1rem))] max-h-[85vh] -translate-x-1/2 -translate-y-1/2 overflow-hidden bg-card border-2 border-primary rounded-2xl shadow-2xl p-4 text-foreground animate-in fade-in zoom-in-95 duration-200 [--button-scale:1]">
+                    <div className="flex items-center justify-between mb-3 pb-3 border-b border-border/70">
                       <div className="flex flex-col">
                         <h3 className="font-black text-xs uppercase tracking-widest">Personalizar Subtítulos</h3>
                         <p className="text-[9px] text-muted-foreground font-bold">AJUSTES LOCALES DEL VÍDEO</p>
@@ -533,30 +535,30 @@ export function VideoPage() {
                     <div className="flex gap-2 mb-4 bg-muted p-1 rounded-xl">
                       <button 
                         onClick={() => setSettingsTab('tracks')}
-                        className={`flex-1 py-2 rounded-lg text-[10px] font-black uppercase transition-all ${settingsTab === 'tracks' ? 'bg-primary text-white shadow-md' : 'hover:bg-card'}`}
+                        className={`min-w-0 flex-1 py-2 rounded-lg text-[10px] font-black uppercase transition-all ${settingsTab === 'tracks' ? 'bg-primary text-white shadow-md' : 'hover:bg-card'}`}
                       >
                         Idiomas
                       </button>
                       <button 
                         onClick={() => setSettingsTab('size')}
-                        className={`flex-1 py-2 rounded-lg text-[10px] font-black uppercase transition-all ${settingsTab === 'size' ? 'bg-primary text-white shadow-md' : 'hover:bg-card'}`}
+                        className={`min-w-0 flex-1 py-2 rounded-lg text-[10px] font-black uppercase transition-all ${settingsTab === 'size' ? 'bg-primary text-white shadow-md' : 'hover:bg-card'}`}
                       >
                         Tamaño
                       </button>
                     </div>
 
-                    <div className="max-h-56 overflow-y-auto space-y-1 pr-2 thin-scrollbar mb-4">
+                    <div className="max-h-[50vh] overflow-y-auto overflow-x-hidden space-y-1 pr-1 thin-scrollbar mb-3">
                       {settingsTab === 'tracks' ? (
                         availableTracks.length > 0 ? (
                           availableTracks.map((track, i) => (
                             <button
                               key={track.uid || i}
                               onClick={() => handleTrackChange(track)}
-                              className={`w-full text-left px-4 py-3 rounded-[1.2rem] text-[11px] font-[900] uppercase tracking-tight transition-all flex items-center justify-between ${currentTrack?.uid === track.uid ? 'bg-primary/10 text-primary border-l-4 border-primary' : 'hover:bg-muted'}`}
+                              className={`w-full text-left px-3.5 py-2.5 rounded-xl text-sm font-extrabold transition-all flex items-center justify-between gap-2 ${currentTrack?.uid === track.uid ? 'bg-primary/10 text-primary ring-1 ring-primary/40' : 'hover:bg-muted'}`}
                             >
-                              {track.displayName}
+                              <span className="truncate">{track.displayName}</span>
                               {currentTrack?.uid === track.uid && (
-                                <div className="flex items-center gap-1.5">
+                                <div className="flex items-center gap-1.5 shrink-0">
                                   <div className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
                                   <span className="text-[8px] font-black">ACTIVO</span>
                                 </div>
@@ -567,7 +569,7 @@ export function VideoPage() {
                           <p className="text-[10px] text-muted-foreground text-center py-6 italic font-medium">Buscando pistas disponibles...</p>
                         )
                       ) : (
-                        <div className="grid grid-cols-2 gap-2 py-2">
+                        <div className="grid grid-cols-2 gap-2 py-1">
                           {[
                             { label: 'Pequeño', val: 0 },
                             { label: 'Normal', val: 1 },
@@ -577,7 +579,7 @@ export function VideoPage() {
                             <button
                               key={s.val}
                               onClick={() => handleFontSizeChange(s.val)}
-                              className="px-3 py-4 rounded-2xl border-2 border-border text-[10px] font-black uppercase tracking-tight hover:border-primary hover:bg-primary/5 transition-all"
+                              className={`px-3 py-3 rounded-xl border-2 text-[10px] font-black uppercase tracking-tight transition-all ${selectedFontSize === s.val ? 'border-primary bg-primary/10 text-primary ring-1 ring-primary/30' : 'border-border hover:border-primary hover:bg-primary/5'}`}
                             >
                               {s.label}
                             </button>
@@ -586,14 +588,14 @@ export function VideoPage() {
                       )}
                     </div>
 
-                    <div className="pt-4 border-t border-border flex flex-col gap-2">
+                    <div className="pt-3 border-t border-border/70 flex flex-col gap-2">
                       <button 
                         onClick={() => {
                           setAccessibility({ subtitles: captionsEnabled });
                           setShowSettings(false);
                           toast.success("Ajustes guardados en tu perfil de accesibilidad");
                         }}
-                        className="w-full py-3 bg-primary text-white rounded-xl text-[10px] font-black uppercase tracking-widest shadow-lg shadow-primary/30 active:scale-95 transition-all"
+                        className="w-full py-2.5 bg-primary text-white rounded-xl text-[10px] font-black uppercase tracking-wide shadow-lg shadow-primary/30 active:scale-95 transition-all"
                       >
                         Guardar como predeterminado
                       </button>

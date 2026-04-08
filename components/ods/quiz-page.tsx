@@ -3,16 +3,37 @@
 import { useState } from "react"
 import { useApp } from "@/lib/app-context"
 import { QUIZZES, Quiz, Question } from "@/lib/quizzes"
-import { Lock, CheckCircle2, Play, Trophy, ArrowLeft, Star } from "lucide-react"
+import { Lock, CheckCircle2, Play, Trophy, ArrowLeft, Star, LogIn } from "lucide-react"
 
 export function QuizPage() {
-  const { completedQuizzes, completeQuiz, addNotification, user } = useApp()
+  const { completedQuizzes, completeQuiz, addNotification, user, setCurrentPage } = useApp()
   const [selectedQuizId, setSelectedQuizId] = useState<string | null>(null)
   const [currentQuestionIdx, setCurrentQuestionIdx] = useState(0)
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null)
   const [showFeedback, setShowFeedback] = useState(false)
   const [score, setScore] = useState(0)
   const [quizFinished, setQuizFinished] = useState(false)
+
+  if (!user) {
+    return (
+      <main className="min-h-[70vh] flex items-center justify-center p-8">
+        <div className="bg-card border-2 border-dashed border-border rounded-3xl p-12 text-center max-w-sm animate-in fade-in zoom-in duration-500">
+          <div className="w-20 h-20 bg-muted rounded-full flex items-center justify-center mx-auto mb-6">
+            <Lock className="w-10 h-10 text-muted-foreground" />
+          </div>
+          <h2 className="text-2xl font-black uppercase tracking-tighter mb-2">Acceso Restringido</h2>
+          <p className="text-muted-foreground font-medium mb-8">Debes iniciar sesión para participar en los cuestionarios y ganar logros.</p>
+          <button
+            onClick={() => setCurrentPage("login")}
+            className="w-full bg-primary text-primary-foreground font-black py-4 rounded-2xl shadow-lg shadow-primary/20 hover:shadow-primary/40 transition-all flex items-center justify-center gap-2 group"
+          >
+            <LogIn className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+            IR AL LOGIN
+          </button>
+        </div>
+      </main>
+    )
+  }
 
   const activeQuiz = QUIZZES.find(q => q.id === selectedQuizId)
 

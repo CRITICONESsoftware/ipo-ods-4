@@ -54,15 +54,14 @@ export function Header() {
           <div className="flex items-center gap-3">
             <div className="hidden md:flex flex-col items-end">
               <span className="text-[11px] font-black uppercase tracking-tight leading-none mb-1">{user.name}</span>
-              <span className={`text-[10px] font-black uppercase tracking-widest px-2 py-0.5 rounded-md border ${
-                user.role === 'admin' 
-                ? 'bg-[#fcc30b] text-primary border-[#fcc30b]/20 shadow-[0_0_10px_-4px_rgba(252,195,11,0.6)]' 
-                : 'bg-white/10 text-white border-white/20'
-              }`}>
+              <span className={`text-[10px] font-black uppercase tracking-widest px-2 py-0.5 rounded-md border ${user.role === 'admin'
+                  ? 'bg-[#fcc30b] text-primary border-[#fcc30b]/20 shadow-[0_0_10px_-4px_rgba(252,195,11,0.6)]'
+                  : 'bg-white/10 text-white border-white/20'
+                }`}>
                 {user.role}
               </span>
             </div>
-            <button 
+            <button
               onClick={() => router.push("/profile")}
               className="w-9 h-9 rounded-xl bg-white/10 border border-white/20 flex items-center justify-center font-black text-sm hover:bg-white/20 transition-all group overflow-hidden"
             >
@@ -87,7 +86,7 @@ export function Header() {
             className="flex items-center gap-2 bg-white text-primary px-4 py-2 rounded-xl font-black text-sm shadow-lg hover:shadow-white/20 transition-all active:scale-95 group"
           >
             <LogIn className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
-            <span className="hidden xs:inline">INICIAR SESIÓN</span>
+            <span>INICIAR SESIÓN</span>
           </button>
         )}
       </div>

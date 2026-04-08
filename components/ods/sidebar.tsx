@@ -49,7 +49,7 @@ export function Sidebar() {
   const groups = [
     { key: "info", label: "INFORMACIÓN", items: currentNavItems.filter((i) => i.group === "info") },
     { key: "interactive", label: "APRENDIZAJE", items: currentNavItems.filter((i) => i.group === "interactive") },
-    { key: "account", label: "COMUNIDAD", items: user ? currentNavItems.filter((i) => i.group === "account") : [] },
+    { key: "account", label: "COMUNIDAD", items: currentNavItems.filter((i) => i.group === "account") },
     { key: "settings", label: "CONFIGURACIÓN", items: currentNavItems.filter((i) => i.group === "settings") },
   ]
 

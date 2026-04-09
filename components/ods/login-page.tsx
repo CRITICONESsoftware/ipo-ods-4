@@ -3,13 +3,14 @@
 import { useState } from "react"
 import { useApp } from "@/lib/app-context"
 import { useRouter } from "next/navigation"
-import { Mail, Lock, LogIn, ArrowRight, AlertCircle } from "lucide-react"
+import { Mail, Lock, LogIn, ArrowRight, AlertCircle, Eye, EyeOff } from "lucide-react"
 
 export function LoginPage() {
   const { login, setCurrentPage } = useApp()
   const router = useRouter()
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
+  const [showPassword, setShowPassword] = useState(false)
   const [error, setError] = useState("")
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -64,13 +65,20 @@ export function LoginPage() {
               <div className="relative group">
                 <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
                 <input
-                  type="password"
+                  type={showPassword ? "text" : "password"}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="w-full bg-background/50 border border-border rounded-2xl py-3 pl-10 pr-4 outline-none focus:border-primary focus:ring-1 focus:ring-primary/20 transition-all"
+                  className="w-full bg-background/50 border border-border rounded-2xl py-3 pl-10 pr-10 outline-none focus:border-primary focus:ring-1 focus:ring-primary/20 transition-all"
                   placeholder="••••••••"
                   required
                 />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-primary transition-colors focus:outline-none"
+                >
+                  {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                </button>
               </div>
             </div>
 
@@ -107,7 +115,7 @@ export function LoginPage() {
 
         {/* SDG Color Bar */}
         <div className="flex h-1.5">
-          {["#e5243b","#dda63a","#4c9f38","#c5192d","#ff3a21","#26bde2","#fcc30b","#a21942","#fd6925","#dd1367","#fd9d24","#bf8b2e","#3f7e44","#0a97d9","#56c02b","#00689d","#19486a"].map((color, i) => (
+          {["#e5243b", "#dda63a", "#4c9f38", "#c5192d", "#ff3a21", "#26bde2", "#fcc30b", "#a21942", "#fd6925", "#dd1367", "#fd9d24", "#bf8b2e", "#3f7e44", "#0a97d9", "#56c02b", "#00689d", "#19486a"].map((color, i) => (
             <div key={i} className="flex-1" style={{ backgroundColor: color }} />
           ))}
         </div>

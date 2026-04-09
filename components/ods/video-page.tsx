@@ -49,6 +49,30 @@ declare global {
 
 const VIDEO_ID = "xYUF3BLlTkw"
 
+const INVALID_TRACK_KEYS = new Set([
+  "reload",
+  "fontsize",
+  "track",
+  "tracklist",
+  "translationlanguages",
+  "samplesubtitle",
+])
+
+const isLikelyLanguageCode = (value: string) => /^[a-z]{2}(-[A-Z]{2})?$/.test(value)
+
+const isValidTrackEntry = (entry: any) => {
+  if (!entry) return false
+  if (typeof entry === "string") {
+    const normalized = entry.trim().toLowerCase()
+    if (!normalized || INVALID_TRACK_KEYS.has(normalized)) return false
+    return isLikelyLanguageCode(normalized)
+  }
+
+  const code = String(entry.languageCode || entry.language || entry.id || "").trim()
+  const normalizedCode = code.toLowerCase()
+  return !!normalizedCode && !INVALID_TRACK_KEYS.has(normalizedCode)
+}
+
 const processTracks = (rawTracks: any) => {
   if (!Array.isArray(rawTracks)) return []
   return rawTracks.map((t, idx) => {
@@ -60,7 +84,7 @@ const processTracks = (rawTracks: any) => {
       return { ...t, uid, languageCode: code, displayName: nameStr }
     }
     return null
-  }).filter(Boolean)
+  }).filter((track) => !!track && isValidTrackEntry(track))
 }
 
 export function VideoPage() {
@@ -351,15 +375,14 @@ export function VideoPage() {
     if (!playerRef.current) return
     
     try {
-      // Try multiple possible ways to get the tracks
+      // Always prefer the explicit track list to avoid caption module option keys.
       const possibleTracks = [
         playerRef.current.getOption?.("captions", "tracklist"),
-        playerRef.current.getOptions?.("captions", "tracklist"),
         (playerRef.current as any).getAvailableTracks?.(),
         (playerRef.current as any).getAvailableTranslationLanguages?.()
       ]
-      
-      const rawTracks = possibleTracks.find(t => t && Array.isArray(t) && t.length > 0)
+
+      const rawTracks = possibleTracks.find((t) => Array.isArray(t) && t.some(isValidTrackEntry))
       const cleanTracks = processTracks(rawTracks || [])
 
       if (cleanTracks.length > 0) {
@@ -524,7 +547,6 @@ export function VideoPage() {
                           className="p-1.5 hover:bg-muted rounded-full transition-colors text-muted-foreground hover:text-primary"
                           title="Actualizar idiomas"
                         >
-                          <Settings className="w-3.5 h-3.5" />
                         </button>
                         <button onClick={() => setShowSettings(false)} className="text-muted-foreground hover:text-foreground p-1">
                           <X className="w-5 h-5" />

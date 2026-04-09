@@ -45,9 +45,6 @@ export function ProfilePage() {
           <div className="w-32 h-32 bg-gradient-to-br from-primary to-primary/60 rounded-[2rem] flex items-center justify-center text-5xl font-black text-white shadow-2xl rotate-3 group-hover:rotate-0 transition-transform">
             {user.avatar || user.name.charAt(0).toUpperCase()}
           </div>
-          <button className="absolute -bottom-2 -right-2 p-3 bg-card border-2 border-border rounded-2xl text-primary hover:bg-primary hover:text-primary-foreground shadow-lg transition-all active:scale-90">
-            <Pencil size={18} />
-          </button>
         </div>
 
         <div className="flex-1 text-center md:text-left">
@@ -117,22 +114,7 @@ export function ProfilePage() {
                   <div className="w-2 h-8 bg-primary rounded-full" />
                   <h3 className="text-2xl font-black uppercase tracking-tighter">Tu actividad en el foro</h3>
                 </div>
-                
-                {forumMessages.length > 0 ? (
-                  <div className="space-y-4">
-                    {forumMessages.map((msg) => (
-                      <div key={msg.id} className="bg-muted/30 border-2 border-border p-6 rounded-3xl group hover:border-primary/30 transition-colors">
-                        <h5 className="font-black text-lg mb-2 flex items-center gap-2">
-                          <MessageCircle size={18} className="text-primary" />
-                          {msg.title}
-                        </h5>
-                        <p className="text-foreground/80 font-medium leading-relaxed italic">"{msg.content}"</p>
-                      </div>
-                    ))}
-                  </div>
-                ) : (
-                  <p className="text-muted-foreground font-bold italic p-8 text-center bg-muted/20 rounded-2xl border-2 border-dashed border-border">No has participado en debates todavía.</p>
-                )}
+                <h5 className="text-muted-foreground font-bold italic">Próximamente</h5>
               </div>
             </div>
           )}

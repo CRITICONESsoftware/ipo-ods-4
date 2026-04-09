@@ -11,11 +11,11 @@ export function Header() {
   const router = useRouter()
 
   return (
-    <header className="flex items-center justify-between pl-4 pr-8 py-2 bg-primary text-primary-foreground shadow-md sticky top-0 z-30">
+    <header className="flex items-center justify-between pl-4 pr-8 py-2 bg-primary text-primary-foreground shadow-md sticky top-0 z-30 border-b-2 border-primary-foreground/20">
       <div className="flex items-center gap-4">
         <button
           onClick={() => setSidebarOpen(!sidebarOpen)}
-          className="p-2 rounded-xl hover:bg-white/10 transition-all active:scale-95"
+          className="p-2 rounded-xl hover:bg-white/15 focus:outline-2 focus:outline-offset-2 focus:outline-white transition-all active:scale-95"
           aria-label="Abrir menu"
         >
           <Menu className="w-6 h-6" />
@@ -41,7 +41,7 @@ export function Header() {
       <div className="flex items-center gap-2 lg:gap-4 md:gap-4">
         <button
           onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-          className="p-2 rounded-xl bg-white/10 hover:bg-white/20 transition-all active:scale-95 border border-white/5"
+          className="p-2 rounded-xl bg-white/15 hover:bg-white/25 focus:outline-2 focus:outline-offset-2 focus:outline-white transition-all active:scale-95 border border-white/10"
           aria-label="Cambiar tema"
         >
           {theme === "dark" ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
@@ -53,7 +53,7 @@ export function Header() {
           <div className="ml-6 flex items-center gap-4">
             <button
               onClick={() => router.push("/profile")}
-              className="flex items-center gap-2 bg-white/10 border border-white/20 px-3 py-2 rounded-xl font-black text-[11px] sm:text-sm hover:bg-white/20 transition-all group whitespace-nowrap"
+              className="flex items-center gap-2 bg-white/15 border border-white/30 px-3 py-2 rounded-xl font-black text-[11px] sm:text-sm hover:bg-white/25 focus:outline-2 focus:outline-offset-2 focus:outline-white transition-all group whitespace-nowrap"
               aria-label="Perfil"
               title="Perfil"
             >
@@ -62,7 +62,7 @@ export function Header() {
             </button>
             <button
               onClick={logout}
-              className="ml-10 pl-8 border-l border-l-white/20 flex items-center gap-2 bg-white/10 border border-white/30 text-white px-2 sm:px-4 py-2 rounded-xl font-black text-[11px] sm:text-sm whitespace-nowrap shadow-lg hover:bg-destructive hover:border-destructive hover:text-destructive-foreground transition-all active:scale-95 group"
+              className="ml-10 pl-8 border-l border-l-white/30 flex items-center gap-2 bg-white/15 border border-white/30 text-white px-2 sm:px-4 py-2 rounded-xl font-black text-[11px] sm:text-sm whitespace-nowrap shadow-lg hover:bg-destructive hover:border-destructive hover:text-destructive-foreground focus:outline-2 focus:outline-offset-2 focus:outline-white transition-all active:scale-95 group"
               aria-label="Cerrar sesión"
               title="Cerrar sesión"
             >
@@ -73,7 +73,7 @@ export function Header() {
         ) : (
           <button
             onClick={() => router.push("/login")}
-            className="ml-6 mr-3 flex items-center gap-2 bg-white text-primary px-2 sm:px-4 py-2 rounded-xl font-black text-[11px] sm:text-sm whitespace-nowrap shadow-lg hover:shadow-white/20 transition-all active:scale-95 group"
+            className="ml-6 mr-3 flex items-center gap-2 bg-white text-primary px-2 sm:px-4 py-2 rounded-xl font-black text-[11px] sm:text-sm whitespace-nowrap shadow-lg hover:shadow-white/30 focus:outline-2 focus:outline-offset-2 focus:outline-white transition-all active:scale-95 group"
           >
             <UserIcon className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
             <span>Iniciar sesión</span>

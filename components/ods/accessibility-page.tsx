@@ -39,25 +39,18 @@ export function AccessibilityPage() {
     }
     if (option === "colorBlindMode") {
       return [
-        { label: "None", value: "Ninguno", color: "bg-[#a21942]" },
+        { label: "Ninguno", value: "Ninguno", color: "bg-[#a21942]" },
         { label: "Protanopia", value: "Protanopia", color: "bg-[#fd6925]" },
         { label: "Deuteranopia", value: "Deuteranopia", color: "bg-[#bf8b2e]" },
         { label: "Tritanopia", value: "Tritanopia", color: "bg-[#407f46]" },
         { label: "Acromatopsia", value: "Acromatopsia", color: "bg-[#555555]" },
       ]
     }
-    if (option === "elementsLayout") {
-      return [
-        { label: "Standard", value: "Standard", color: "bg-[#0a97d9]" },
-        { label: "Compact", value: "Compact", color: "bg-[#56c02b]" },
-        { label: "Grid", value: "Grid", color: "bg-[#00689d]" },
-      ]
-    }
     if (option === "buttonSizeIndex") {
       return [
-        { label: "PEQ", value: 0, color: "bg-[#e5243b]" },
-        { label: "MED", value: 1, color: "bg-[#dda63a]" },
-        { label: "GRD", value: 2, color: "bg-[#4c9f38]" },
+        { label: "PEQUEÑO", value: 0, color: "bg-[#e5243b]" },
+        { label: "MEDIANO", value: 1, color: "bg-[#dda63a]" },
+        { label: "GRANDE", value: 2, color: "bg-[#4c9f38]" },
       ]
     }
     if (option === "language") {
@@ -99,7 +92,7 @@ export function AccessibilityPage() {
             <h1 className="text-3xl md:text-4xl font-[900] tracking-tighter uppercase text-foreground leading-none">
               {t('accessibility')}
             </h1>
-            <p className="text-muted-foreground font-black uppercase text-[10px] tracking-[0.2em] opacity-80">
+            <p className="text-foreground font-black uppercase text-[10px] tracking-[0.2em]">
               Personalización Total ODS 4
             </p>
           </div>
@@ -151,8 +144,6 @@ export function AccessibilityPage() {
           <section className="bg-card border-2 border-border rounded-3xl p-6 shadow-lg transition-all duration-300 hover:border-primary/40 group/card">
             <SectionHeader icon={<Ear className="w-6 h-6 text-primary" />} label={t('hearing')} />
             <div className="space-y-5">
-              <AccessItem icon={<Volume2 size={18} />} label={t('audio')} active={accessibility.audioEnabled} onClick={() => handleToggle('audioEnabled')} />
-              <AccessItem icon={<Headphones size={18} />} label={t('hearingAids')} active={accessibility.hearingAids} onClick={() => handleToggle('hearingAids')} />
               <AccessItem icon={<MessageSquare size={18} />} label={t('subtitles')} active={accessibility.subtitles} onClick={() => handleToggle('subtitles')} />
             </div>
           </section>
@@ -161,11 +152,6 @@ export function AccessibilityPage() {
           <section className="bg-card border-2 border-border rounded-3xl p-6 shadow-lg transition-all duration-300 hover:border-primary/40 group/card">
             <SectionHeader icon={<Pointer className="w-6 h-6 text-primary" />} label={t('interaction')} />
             <div className="space-y-5">
-              <AccessItem icon={<Layout size={18} />} label={t('layout')} active={accessibility.elementsLayout !== "Standard"}
-                onClick={() => toggleSubMenu('elementsLayout')} subtext={accessibility.elementsLayout}
-                isOpen={activeOption === 'elementsLayout'} options={getOptionsFor('elementsLayout')}
-                onSelect={(val) => { setAccessibility({ elementsLayout: val }); setActiveOption(null); }} currentValue={accessibility.elementsLayout}
-              />
               <AccessItem icon={<Mic size={18} />} label={t('voice')} active={accessibility.voiceNav} onClick={() => handleToggle('voiceNav')} />
               <AccessItem icon={<KeyboardIcon size={18} />} label={t('keyboard')} active={accessibility.keyboardOps} onClick={() => handleToggle('keyboardOps')} />
               <AccessItem icon={<ScanEye size={18} />} label={t('eyeControl')} active={accessibility.eyeControl} onClick={() => handleToggle('eyeControl')} />
@@ -216,7 +202,7 @@ export function AccessibilityPage() {
                   ].map(sc => (
                     <div key={sc.k} className="flex items-center gap-3 group/key">
                       <div className="flex items-center gap-1">
-                        <kbd className="min-w-[40px] px-2 h-8 bg-muted border-b-4 border-foreground/20 rounded-lg flex items-center justify-center font-black text-muted-foreground text-[10px] shadow-sm">ALT</kbd>
+                        <kbd className="min-w-[40px] h-8 bg-card border-b-4 border-primary/20 rounded-lg flex items-center justify-center font-black text-primary text-xs shadow-sm transition-all group-hover/key:border-primary/50 group-hover/key:translate-y-0.5">ALT</kbd>
                         <span className="font-black text-primary">+</span>
                         <kbd className="min-w-[32px] h-8 bg-card border-b-4 border-primary/20 rounded-lg flex items-center justify-center font-black text-primary text-xs shadow-sm transition-all group-hover/key:border-primary/50 group-hover/key:translate-y-0.5">{sc.k}</kbd>
                       </div>

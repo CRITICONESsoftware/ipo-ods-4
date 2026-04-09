@@ -43,6 +43,7 @@ export interface AccessibilitySettings {
   subtitles: boolean
   elementsLayout: string
   keyboardOps: boolean
+  virtualKeyboard: boolean
   eyeControl: boolean
   language: string
   buttonSizeIndex: number
@@ -74,7 +75,8 @@ const TRANSLATIONS = {
     subtitles: "Subtítulos",
     layout: "Disposición",
     voice: "Voz",
-    keyboard: "Teclado",
+    keyboard: "Atajos de teclado",
+    virtualKeyboard: "Teclado en pantalla",
     eyeControl: "Control ocular",
     language: "Idioma",
     level: "Nivel",
@@ -99,7 +101,8 @@ const TRANSLATIONS = {
     subtitles: "Subtitles",
     layout: "Layout",
     voice: "Voice",
-    keyboard: "Keyboard",
+    keyboard: "Keyboard Shortcuts",
+    virtualKeyboard: "On-screen Keyboard",
     eyeControl: "Eye Control",
     language: "Language",
     level: "Level",
@@ -172,7 +175,8 @@ const DEFAULT_ACCESSIBILITY: AccessibilitySettings = {
   hearingAids: false,
   subtitles: false,
   elementsLayout: "Standard",
-  keyboardOps: false,
+  keyboardOps: true,
+  virtualKeyboard: false,
   eyeControl: false,
   language: "Español",
   buttonSizeIndex: 1,

@@ -161,8 +161,7 @@ export function AccessibilityPage() {
           <section className="bg-card border-2 border-border rounded-3xl p-6 shadow-lg transition-all duration-300 hover:border-primary/40 group/card">
             <SectionHeader icon={<Pointer className="w-6 h-6 text-primary" />} label={t('interaction')} />
             <div className="space-y-5">
-              <AccessItem
-                icon={<Layout size={18} />} label={t('layout')} active={accessibility.elementsLayout !== "Standard"}
+              <AccessItem icon={<Layout size={18} />} label={t('layout')} active={accessibility.elementsLayout !== "Standard"}
                 onClick={() => toggleSubMenu('elementsLayout')} subtext={accessibility.elementsLayout}
                 isOpen={activeOption === 'elementsLayout'} options={getOptionsFor('elementsLayout')}
                 onSelect={(val) => { setAccessibility({ elementsLayout: val }); setActiveOption(null); }} currentValue={accessibility.elementsLayout}
@@ -207,7 +206,7 @@ export function AccessibilityPage() {
                   </div>
                   <h3 className="font-black uppercase tracking-widest text-xs">Atajos de Teclado</h3>
                 </div>
-                <div className="grid grid-cols-2 gap-3">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   {[
                     { k: 'H', v: 'Inicio' }, { k: 'P', v: 'Perfil' },
                     { k: 'V', v: 'Vídeo' }, { k: 'A', v: 'Ajustes' },
@@ -215,8 +214,12 @@ export function AccessibilityPage() {
                     { k: 'Q', v: 'Quiz' }, { k: 'L', v: 'Login' },
                     { k: 'S', v: 'Registro' }
                   ].map(sc => (
-                    <div key={sc.k} className="flex items-center gap-2 group/key">
-                      <kbd className="min-w-[32px] h-8 bg-card border-b-4 border-primary/20 rounded-lg flex items-center justify-center font-black text-primary text-xs shadow-sm transition-all group-hover/key:border-primary/50 group-hover/key:translate-y-0.5">{sc.k}</kbd>
+                    <div key={sc.k} className="flex items-center gap-3 group/key">
+                      <div className="flex items-center gap-1">
+                        <kbd className="min-w-[40px] px-2 h-8 bg-muted border-b-4 border-foreground/20 rounded-lg flex items-center justify-center font-black text-muted-foreground text-[10px] shadow-sm">ALT</kbd>
+                        <span className="font-black text-primary">+</span>
+                        <kbd className="min-w-[32px] h-8 bg-card border-b-4 border-primary/20 rounded-lg flex items-center justify-center font-black text-primary text-xs shadow-sm transition-all group-hover/key:border-primary/50 group-hover/key:translate-y-0.5">{sc.k}</kbd>
+                      </div>
                       <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">{sc.v}</span>
                     </div>
                   ))}

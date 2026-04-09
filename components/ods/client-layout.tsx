@@ -256,8 +256,23 @@ export function ClientLayout({ children }: { children: ReactNode }) {
     if (!accessibility.keyboardOps) return
     const handleKeyDown = (e: KeyboardEvent) => {
       if (['INPUT', 'TEXTAREA'].includes((e.target as HTMLElement).tagName)) return
+
+      // Use Alt as the modifier
+      if (!e.altKey) return
+
       const key = e.key.toLowerCase()
-      const commands: Record<string, string> = { h: '/', p: '/profile', v: '/video', a: '/accessibility', f: '/forum', d: '/donations', q: '/quiz', l: '/login', s: '/signup' }
+      const commands: Record<string, string> = {
+        h: '/',
+        p: '/profile',
+        v: '/video',
+        a: '/accessibility',
+        f: '/forum',
+        d: '/donations',
+        q: '/quiz',
+        l: '/login',
+        s: '/signup'
+      }
+
       if (commands[key]) {
         e.preventDefault()
         router.push(commands[key])

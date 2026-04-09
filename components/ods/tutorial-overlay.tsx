@@ -17,7 +17,7 @@ const tutorialSteps = [
     image: "/tutorial3.png",
   },
   {
-    text: "Atajos Rápidos: H (Inicio), P (Perfil), V (Vídeo), A (Ajustes), F (Foro), D (Donar), Q (Quiz), L (Login), S (Registro)",
+    text: "Atajos Rápidos (pulsando ALT): Alt+H (Inicio), Alt+P (Perfil), Alt+V (Vídeo), Alt+A (Ajustes), Alt+F (Foro), Alt+D (Donar), Alt+Q (Quiz), Alt+L (Login), Alt+S (Registro)",
     image: "/tutorial4.png",
   },
   {

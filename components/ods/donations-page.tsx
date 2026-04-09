@@ -56,24 +56,21 @@ export function DonationsPage() {
               <h3 className="text-xl font-bold text-foreground group-hover:text-primary transition-colors">
                 {org.name}
               </h3>
-              <div className="p-2 bg-primary/10 rounded-full">
-                <Heart className="w-5 h-5 text-primary fill-none group-hover:fill-primary transition-all" />
-              </div>
             </div>
-            
+
             <p className="text-sm text-muted-foreground mb-4 leading-relaxed">
               {org.description}
             </p>
 
             <div className="space-y-2 mb-6">
-              <a 
+              <a
                 href={`tel:${org.phone.replace(/\s/g, "")}`}
                 className="flex items-center gap-2 text-sm text-foreground hover:text-primary transition-colors"
               >
                 <Phone className="w-4 h-4 text-primary" />
                 <span className="font-medium mr-1">Teléfono:</span> {org.phone}
               </a>
-              <a 
+              <a
                 href={org.mapsUrl}
                 target="_blank"
                 rel="noopener noreferrer"
@@ -85,7 +82,7 @@ export function DonationsPage() {
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-4">
-              <a 
+              <a
                 href="#"
                 onClick={(e) => { e.preventDefault(); handleDonate(org.name); }}
                 className="w-full inline-flex items-center justify-center gap-2 px-5 py-3 bg-primary text-primary-foreground rounded-xl hover:bg-primary/90 hover:scale-[1.02] active:scale-[0.98] hover:shadow-md transition-all text-sm font-semibold select-none"
@@ -93,7 +90,7 @@ export function DonationsPage() {
                 <Heart className="w-4 h-4 fill-primary-foreground shrink-0" />
                 <span className="truncate">Donar ahora</span>
               </a>
-              <a 
+              <a
                 href={org.mapsUrl}
                 target="_blank"
                 rel="noopener noreferrer"

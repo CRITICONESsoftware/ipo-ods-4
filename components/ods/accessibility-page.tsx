@@ -1,9 +1,9 @@
 import { useState } from "react"
 import { useApp } from "@/lib/app-context"
 import { useRouter } from "next/navigation"
-import { 
-  ArrowLeft, Eye, Ear, Pointer, Type, Square, ZoomIn, 
-  Palette, Contrast, Volume2, Headphones, MessageSquare, 
+import {
+  ArrowLeft, Eye, Ear, Pointer, Type, Square, ZoomIn,
+  Palette, Contrast, Volume2, Headphones, MessageSquare,
   Layout, Mic, Keyboard as KeyboardIcon, MousePointer, ScanEye, Languages,
   ChevronRight, X, HelpCircle
 } from "lucide-react"
@@ -43,6 +43,7 @@ export function AccessibilityPage() {
         { label: "Protanopia", value: "Protanopia", color: "bg-[#fd6925]" },
         { label: "Deuteranopia", value: "Deuteranopia", color: "bg-[#bf8b2e]" },
         { label: "Tritanopia", value: "Tritanopia", color: "bg-[#407f46]" },
+        { label: "Acromatopsia", value: "Acromatopsia", color: "bg-[#555555]" },
       ]
     }
     if (option === "elementsLayout") {
@@ -86,14 +87,14 @@ export function AccessibilityPage() {
           <div className="relative group mx-auto mb-2">
             <div className="absolute -inset-2 bg-primary/20 rounded-[1.5rem] blur-lg opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
             <div className="relative bg-primary p-4 rounded-2xl shadow-xl shadow-primary/30 transform transition-transform duration-500 hover:scale-105 cursor-default">
-               <div className="w-8 h-8 border-4 border-white/90 rounded-full flex items-center justify-center relative">
-                  <div className="w-5 h-1 bg-white/90 rounded-full rotate-45 absolute" />
-                  <div className="w-5 h-1 bg-white/90 rounded-full -rotate-45 absolute" />
-                  <div className="w-2 h-2 bg-white/90 rounded-full absolute -top-1" />
-               </div>
+              <div className="w-8 h-8 border-4 border-white/90 rounded-full flex items-center justify-center relative">
+                <div className="w-5 h-1 bg-white/90 rounded-full rotate-45 absolute" />
+                <div className="w-5 h-1 bg-white/90 rounded-full -rotate-45 absolute" />
+                <div className="w-2 h-2 bg-white/90 rounded-full absolute -top-1" />
+              </div>
             </div>
           </div>
-          
+
           <div className="space-y-1">
             <h1 className="text-3xl md:text-4xl font-[900] tracking-tighter uppercase text-foreground leading-none">
               {t('accessibility')}
@@ -103,7 +104,7 @@ export function AccessibilityPage() {
             </p>
           </div>
 
-          <a 
+          <a
             href="#"
             onClick={(e) => { e.preventDefault(); router.push("/"); }}
             className="mt-2 px-5 py-2 rounded-xl bg-card border-2 border-border hover:bg-muted text-foreground transition-all font-black uppercase text-[10px] tracking-widest flex items-center gap-2 active:scale-95 select-none"
@@ -114,28 +115,28 @@ export function AccessibilityPage() {
 
         {/* Main Sections Grid */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8">
-          
+
           {/* Column 1: VISIÓN */}
           <section className="bg-card border-2 border-border rounded-3xl p-6 shadow-lg transition-all duration-300 hover:border-primary/40 group/card">
             <SectionHeader icon={<Eye className="w-6 h-6 text-primary" />} label={t('vision')} />
             <div className="space-y-5">
-              <AccessItem 
-                icon={<Type size={18} />} label={t('fontSize')} active={accessibility.fontSizeIndex > 3} 
+              <AccessItem
+                icon={<Type size={18} />} label={t('fontSize')} active={accessibility.fontSizeIndex > 3}
                 onClick={() => toggleSubMenu('fontSizeIndex')} subtext={`${t('level')} ${accessibility.fontSizeIndex + 1}`}
                 isOpen={activeOption === 'fontSizeIndex'} options={getOptionsFor('fontSizeIndex')}
                 onSelect={(val) => { setAccessibility({ fontSizeIndex: val }); setActiveOption(null); }} currentValue={accessibility.fontSizeIndex}
               />
-              <AccessItem 
-                icon={<Square size={18} />} label={t('buttonsSize')} active={accessibility.buttonSizeIndex > 0} 
+              <AccessItem
+                icon={<Square size={18} />} label={t('buttonsSize')} active={accessibility.buttonSizeIndex > 0}
                 onClick={() => toggleSubMenu('buttonSizeIndex')} isOpen={activeOption === 'buttonSizeIndex'}
-                options={getOptionsFor('buttonSizeIndex')} onSelect={(val) => { 
-                  setAccessibility({ buttonSizeIndex: val }); 
+                options={getOptionsFor('buttonSizeIndex')} onSelect={(val) => {
+                  setAccessibility({ buttonSizeIndex: val });
                   setActiveOption(null);
                 }}
                 currentValue={accessibility.buttonSizeIndex} subtext={`${t('level')} ${accessibility.buttonSizeIndex + 1}`}
               />
               <AccessItem icon={<ZoomIn size={18} />} label={t('magnifier')} active={accessibility.magnifier} onClick={() => handleToggle('magnifier')} />
-              <AccessItem 
+              <AccessItem
                 icon={<Palette size={18} />} label={t('filters')} active={accessibility.colorBlindMode !== "Ninguno"}
                 onClick={() => toggleSubMenu('colorBlindMode')} subtext={accessibility.colorBlindMode}
                 isOpen={activeOption === 'colorBlindMode'} options={getOptionsFor('colorBlindMode')}
@@ -160,8 +161,7 @@ export function AccessibilityPage() {
           <section className="bg-card border-2 border-border rounded-3xl p-6 shadow-lg transition-all duration-300 hover:border-primary/40 group/card">
             <SectionHeader icon={<Pointer className="w-6 h-6 text-primary" />} label={t('interaction')} />
             <div className="space-y-5">
-              <AccessItem 
-                icon={<Layout size={18} />} label={t('layout')} active={accessibility.elementsLayout !== "Standard"}
+              <AccessItem icon={<Layout size={18} />} label={t('layout')} active={accessibility.elementsLayout !== "Standard"}
                 onClick={() => toggleSubMenu('elementsLayout')} subtext={accessibility.elementsLayout}
                 isOpen={activeOption === 'elementsLayout'} options={getOptionsFor('elementsLayout')}
                 onSelect={(val) => { setAccessibility({ elementsLayout: val }); setActiveOption(null); }} currentValue={accessibility.elementsLayout}
@@ -169,8 +169,8 @@ export function AccessibilityPage() {
               <AccessItem icon={<Mic size={18} />} label={t('voice')} active={accessibility.voiceNav} onClick={() => handleToggle('voiceNav')} />
               <AccessItem icon={<KeyboardIcon size={18} />} label={t('keyboard')} active={accessibility.keyboardOps} onClick={() => handleToggle('keyboardOps')} />
               <AccessItem icon={<ScanEye size={18} />} label={t('eyeControl')} active={accessibility.eyeControl} onClick={() => handleToggle('eyeControl')} />
-              <AccessItem 
-                icon={<Languages size={18} />} label={t('language')} active={true} 
+              <AccessItem
+                icon={<Languages size={18} />} label={t('language')} active={true}
                 onClick={() => toggleSubMenu('language')} subtext={accessibility.language}
                 isOpen={activeOption === 'language'} options={getOptionsFor('language')}
                 onSelect={(val) => { setAccessibility({ language: val }); setActiveOption(null); }} currentValue={accessibility.language}
@@ -183,7 +183,7 @@ export function AccessibilityPage() {
         {/* New Help & Commands Section */}
         <section className="mt-8 bg-card border-2 border-border rounded-3xl overflow-hidden shadow-lg relative group/help animate-in fade-in slide-in-from-bottom-8 duration-700">
           <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full blur-3xl -mr-32 -mt-32 transition-transform duration-1000 group-hover/help:scale-150" />
-          
+
           <div className="p-6 md:p-8 relative z-10 flex flex-col lg:flex-row gap-8 items-start">
             <div className="lg:w-1/3 space-y-4">
               <div className="w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center text-primary border border-primary/20">
@@ -206,7 +206,7 @@ export function AccessibilityPage() {
                   </div>
                   <h3 className="font-black uppercase tracking-widest text-xs">Atajos de Teclado</h3>
                 </div>
-                <div className="grid grid-cols-2 gap-3">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   {[
                     { k: 'H', v: 'Inicio' }, { k: 'P', v: 'Perfil' },
                     { k: 'V', v: 'Vídeo' }, { k: 'A', v: 'Ajustes' },
@@ -214,8 +214,12 @@ export function AccessibilityPage() {
                     { k: 'Q', v: 'Quiz' }, { k: 'L', v: 'Login' },
                     { k: 'S', v: 'Registro' }
                   ].map(sc => (
-                    <div key={sc.k} className="flex items-center gap-2 group/key">
-                      <kbd className="min-w-[32px] h-8 bg-card border-b-4 border-primary/20 rounded-lg flex items-center justify-center font-black text-primary text-xs shadow-sm transition-all group-hover/key:border-primary/50 group-hover/key:translate-y-0.5">{sc.k}</kbd>
+                    <div key={sc.k} className="flex items-center gap-3 group/key">
+                      <div className="flex items-center gap-1">
+                        <kbd className="min-w-[40px] px-2 h-8 bg-muted border-b-4 border-foreground/20 rounded-lg flex items-center justify-center font-black text-muted-foreground text-[10px] shadow-sm">ALT</kbd>
+                        <span className="font-black text-primary">+</span>
+                        <kbd className="min-w-[32px] h-8 bg-card border-b-4 border-primary/20 rounded-lg flex items-center justify-center font-black text-primary text-xs shadow-sm transition-all group-hover/key:border-primary/50 group-hover/key:translate-y-0.5">{sc.k}</kbd>
+                      </div>
                       <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">{sc.v}</span>
                     </div>
                   ))}
@@ -234,7 +238,7 @@ export function AccessibilityPage() {
                   <p className="text-[10px] font-bold text-primary/60 uppercase tracking-[0.2em]">Ejemplos destacados:</p>
                   <div className="grid grid-cols-1 gap-2">
                     {[
-                      '"Ir a Inicio"', '"Abre mi Perfil"', '"Ver Vídeo"', 
+                      '"Ir a Inicio"', '"Abre mi Perfil"', '"Ver Vídeo"',
                       '"Cuestionario"', '"Mensajes Foro"', '"Quiero Donar"',
                       '"Cerrar Sesión"', '"Accesibilidad"'
                     ].map((v, i) => (
@@ -264,16 +268,16 @@ function SectionHeader({ icon, label }: { icon: React.ReactNode, label: string }
           {icon}
         </div>
       </div>
-      <h2 className="text-xl font-[1000] uppercase tracking-[0.25em] text-[#19486a] dark:text-primary">{label}</h2>
+      <h2 className="text-xl font-[1000] uppercase tracking-[0.1em] text-[#19486a] dark:text-primary px-2">{label}</h2>
     </div>
   )
 }
 
-function AccessItem({ 
-  icon, label, subtext, active, onClick, isOpen, options, onSelect, currentValue 
-}: { 
-  icon: React.ReactNode, 
-  label: string, 
+function AccessItem({
+  icon, label, subtext, active, onClick, isOpen, options, onSelect, currentValue
+}: {
+  icon: React.ReactNode,
+  label: string,
   subtext?: string,
   active?: boolean,
   onClick?: () => void,
@@ -284,16 +288,14 @@ function AccessItem({
 }) {
   return (
     <div className={`transition-all duration-700 rounded-[2.5rem] p-1.5 ${isOpen ? 'bg-primary/5 shadow-[inset_0_2px_10px_rgba(0,0,0,0.05)] border-2 border-primary/10' : 'hover:bg-muted/50'}`}>
-      <a 
+      <a
         href="#"
         onClick={(e) => { e.preventDefault(); onClick?.(); }}
-        className={`w-full group text-left p-3.5 rounded-3xl flex items-center gap-4 transition-all duration-300 active:scale-[0.98] border-2 border-transparent select-none ${
-          onClick ? 'cursor-pointer' : 'cursor-default'
-        } ${isOpen ? 'bg-card shadow-xl scale-[1.03] border-primary/20' : ''}`}
+        className={`w-full group text-left p-4 rounded-3xl flex items-center justify-between gap-4 transition-all duration-300 active:scale-[0.98] border-2 border-transparent select-none ${onClick ? 'cursor-pointer' : 'cursor-default'
+          } ${isOpen ? 'bg-card shadow-xl border-primary/20' : ''}`}
       >
-        <div className={`p-3.5 rounded-2xl transition-all duration-500 shrink-0 ${
-          active ? 'bg-primary text-white shadow-lg shadow-primary/30 rotate-3' : 'bg-muted dark:bg-muted/10 text-muted-foreground group-hover:text-primary group-hover:bg-primary/10'
-        }`}>
+        <div className={`p-4 rounded-2xl transition-all duration-500 shrink-0 ${active ? 'bg-primary text-white shadow-lg shadow-primary/30 rotate-3' : 'bg-muted dark:bg-muted/10 text-muted-foreground group-hover:text-primary group-hover:bg-primary/10'
+          }`}>
           {icon}
         </div>
         <div className="flex-1 min-w-0">
@@ -305,26 +307,28 @@ function AccessItem({
             </div>
           )}
         </div>
-        
-        {/* Modern Toggle Switch */}
-        {active !== undefined && !options && !isOpen && (
-          <div className="flex items-center gap-3 shrink-0">
-            <span className={`text-[9px] font-black tracking-widest ${active ? 'text-primary' : 'text-muted-foreground/50'}`}>
-              {active ? 'SÍ' : 'NO'}
-            </span>
-            <div className={`w-14 h-7 rounded-full p-1 transition-all duration-500 relative flex items-center ${active ? 'bg-primary/20 ring-2 ring-primary/30' : 'bg-muted dark:bg-muted/10'}`}>
-              <div className={`w-5 h-5 rounded-full shadow-lg transition-all duration-500 ${active ? 'bg-primary translate-x-7 scale-110 shadow-primary/40' : 'bg-muted-foreground/30 translate-x-0'}`} />
+
+        {/* Modern Toggle Switch/Value - Fixed width to ensure it never overlaps labels */}
+        <div className="flex items-center gap-4 shrink-0">
+          {active !== undefined && !options && !isOpen && (
+            <>
+              <span className={`text-[11px] font-black tracking-widest ${active ? 'text-primary' : 'text-muted-foreground/50'} min-w-[2rem] text-right`}>
+                {active ? 'SÍ' : 'NO'}
+              </span>
+              <div className={`w-16 h-8 rounded-full p-1.5 transition-all duration-500 relative flex items-center ${active ? 'bg-primary/20 ring-4 ring-primary/30' : 'bg-muted dark:bg-muted/10 shadow-inner'}`}>
+                <div className={`w-5 h-5 rounded-full shadow-2xl transition-all duration-500 ${active ? 'bg-primary translate-x-8 scale-125 shadow-primary/40' : 'bg-muted-foreground/30 translate-x-0'}`} />
+              </div>
+            </>
+          )}
+
+          {options && (
+            <div className={`p-2 rounded-xl transition-all duration-500 shrink-0 ${isOpen ? 'bg-primary/10 text-primary rotate-90' : 'text-muted-foreground'}`}>
+              <ChevronRight size={20} className="stroke-[4px]" />
             </div>
-          </div>
-        )}
-        
-        {options && (
-          <div className={`p-2 rounded-xl transition-all duration-500 shrink-0 ${isOpen ? 'bg-primary/10 text-primary rotate-90' : 'text-muted-foreground'}`}>
-            <ChevronRight size={18} className="stroke-[3.5px]" />
-          </div>
-        )}
+          )}
+        </div>
       </a>
-      
+
       {isOpen && options && (
         <div className="px-4 py-8 grid grid-cols-1 sm:grid-cols-2 gap-6 animate-in fade-in slide-in-from-top-6 duration-700">
           {options.map((opt, i) => (

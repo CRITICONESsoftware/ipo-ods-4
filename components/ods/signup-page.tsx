@@ -3,7 +3,7 @@
 import { useState } from "react"
 import { useApp } from "@/lib/app-context"
 import { useRouter } from "next/navigation"
-import { User, Mail, Lock, UserPlus, CheckCircle2, ShieldCheck, ArrowRight } from "lucide-react"
+import { User, Mail, Lock, UserPlus, CheckCircle2, ShieldCheck, ArrowRight, Eye, EyeOff } from "lucide-react"
 
 export function SignupPage() {
   const { signup, setCurrentPage } = useApp()
@@ -11,11 +11,18 @@ export function SignupPage() {
   const [name, setName] = useState("")
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
+  const [confirmPassword, setConfirmPassword] = useState("")
+  const [showPassword, setShowPassword] = useState(false)
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false)
   const [error, setError] = useState("")
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    if (name && email && password) {
+    if (name && email && password && confirmPassword) {
+      if (password !== confirmPassword) {
+        setError("Las contraseñas no coinciden")
+        return
+      }
       signup({ name, email, role: "visitor", avatar: name.charAt(0).toUpperCase() })
       router.push("/")
     } else {
@@ -44,11 +51,11 @@ export function SignupPage() {
           <ul className="space-y-4 relative z-10">
             <li className="flex items-center gap-2 text-xs font-semibold">
               <div className="bg-white/20 p-1 rounded-full"><CheckCircle2 className="w-3 h-3" /></div>
-              Acceso a recursos premium
+              Acceso a los cuestionarios
             </li>
             <li className="flex items-center gap-2 text-xs font-semibold">
               <div className="bg-white/20 p-1 rounded-full"><CheckCircle2 className="w-3 h-3" /></div>
-              Certificados de participación
+              Acceso a los foros
             </li>
             <li className="flex items-center gap-2 text-xs font-semibold">
               <div className="bg-white/20 p-1 rounded-full"><CheckCircle2 className="w-3 h-3" /></div>
@@ -68,7 +75,7 @@ export function SignupPage() {
           <p className="text-muted-foreground mb-6 text-xs font-medium">Empieza gratis en menos de un minuto</p>
 
           <form onSubmit={handleSubmit} className="space-y-3">
-             <div className="space-y-1">
+            <div className="space-y-1">
               <label className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground ml-1">Nombre Completo</label>
               <div className="relative group">
                 <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
@@ -103,13 +110,42 @@ export function SignupPage() {
               <div className="relative group">
                 <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
                 <input
-                  type="password"
+                  type={showPassword ? "text" : "password"}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="w-full bg-background/50 border border-border rounded-lg py-2 pl-10 pr-4 text-sm outline-none focus:border-primary focus:ring-1 focus:ring-primary/20 transition-all font-medium"
+                  className="w-full bg-background/50 border border-border rounded-lg py-2 pl-10 pr-10 text-sm outline-none focus:border-primary focus:ring-1 focus:ring-primary/20 transition-all font-medium"
                   placeholder="••••••••"
                   required
                 />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-primary transition-colors focus:outline-none"
+                >
+                  {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                </button>
+              </div>
+            </div>
+
+            <div className="space-y-1">
+              <label className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground ml-1">Confirmar Contraseña</label>
+              <div className="relative group">
+                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
+                <input
+                  type={showConfirmPassword ? "text" : "password"}
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  className="w-full bg-background/50 border border-border rounded-lg py-2 pl-10 pr-10 text-sm outline-none focus:border-primary focus:ring-1 focus:ring-primary/20 transition-all font-medium"
+                  placeholder="••••••••"
+                  required
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-primary transition-colors focus:outline-none"
+                >
+                  {showConfirmPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                </button>
               </div>
             </div>
 

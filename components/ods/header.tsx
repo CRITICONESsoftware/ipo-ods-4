@@ -51,7 +51,7 @@ export function Header() {
 
         {user ? (
           <div className="ml-6 flex items-center gap-4">
-            <button 
+            <button
               onClick={() => router.push("/profile")}
               className="flex items-center gap-2 bg-white/10 border border-white/20 px-3 py-2 rounded-xl font-black text-[11px] sm:text-sm hover:bg-white/20 transition-all group whitespace-nowrap"
               aria-label="Perfil"

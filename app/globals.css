@@ -127,17 +127,34 @@
   button,
   [role="button"],
   .button-scale {
+    /* Use dynamic scaling for padding and font-size instead of transform: scale 
+       to ensure buttons correctly push surrounding content without overlapping. */
     --scale: var(--button-scale, 1);
-    transform: scale(var(--scale)) !important;
-    transform-origin: center !important;
-    /* Use strong dynamic margins to push surrounding elements and thoroughly prevent overlap both vertically and horizontally */
-    margin-top: calc((var(--scale) - 1) * 1.5rem) !important;
-    margin-bottom: calc((var(--scale) - 1) * 1.5rem) !important;
-    /* Adjust width to avoid horizontal overflow */
-    max-width: calc(100% / var(--scale)) !important;
-    transition:
-      transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1),
-      margin 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
+    
+    /* Scale font size proportionally */
+    font-size: calc(1rem * var(--scale)) !important;
+    
+    /* Scale padding proportionally */
+    padding-top: calc(0.75rem * var(--scale)) !important;
+    padding-bottom: calc(0.75rem * var(--scale)) !important;
+    padding-left: calc(1.5rem * var(--scale)) !important;
+    padding-right: calc(1.5rem * var(--scale)) !important;
+    
+    /* Ensure border radius also scales slightly for look & feel */
+    border-radius: calc(0.5rem * var(--scale)) !important;
+    
+    /* Remove transform as it breaks layout flow */
+    transform: none !important;
+    max-width: 100% !important;
+    height: auto !important;
+    
+    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
+    
+    /* Ensure icon size scales too */
+    & svg {
+      width: calc(1.25rem * var(--scale)) !important;
+      height: calc(1.25rem * var(--scale)) !important;
+    }
   }
   /* Heading scaling based on root font size */
   h1,

@@ -10,35 +10,35 @@ import { fontSizes } from "./accessibility-page"
 import { Mic, X } from "lucide-react"
 
 export function ClientLayout({ children }: { children: ReactNode }) {
-    const { accessibility, setAccessibility } = useApp()
-    const router = useRouter()
-    const [isListening, setIsListening] = useState(false)
-    const [lastTranscript, setLastTranscript] = useState("")
-    const [lastAIResponse, setLastAIResponse] = useState("")
-    const [dwellProgress, setDwellProgress] = useState(0)
-    const lastDwellClick = useRef(0)
+  const { accessibility, setAccessibility } = useApp()
+  const router = useRouter()
+  const [isListening, setIsListening] = useState(false)
+  const [lastTranscript, setLastTranscript] = useState("")
+  const [lastAIResponse, setLastAIResponse] = useState("")
+  const [dwellProgress, setDwellProgress] = useState(0)
+  const lastDwellClick = useRef(0)
 
-    useEffect(() => {
-        const rootFontSize = fontSizes[accessibility.fontSizeIndex]
-        if (rootFontSize) {
-            document.documentElement.style.fontSize = `${rootFontSize}px`
-        }
-        
-        const buttonScales = [1.0, 1.4, 1.85]
-        const currentScale = buttonScales[accessibility.buttonSizeIndex] || 1
-        document.documentElement.style.setProperty('--button-scale', currentScale.toString())
+  useEffect(() => {
+    const rootFontSize = fontSizes[accessibility.fontSizeIndex]
+    if (rootFontSize) {
+      document.documentElement.style.fontSize = `${rootFontSize}px`
+    }
 
-        return () => {
-            document.documentElement.style.fontSize = ""
-            document.documentElement.style.removeProperty('--button-scale')
-        }
-    }, [accessibility.fontSizeIndex, accessibility.buttonSizeIndex])
+    const buttonScales = [1.0, 1.4, 1.85]
+    const currentScale = buttonScales[accessibility.buttonSizeIndex] || 1
+    document.documentElement.style.setProperty('--button-scale', currentScale.toString())
 
-    // Narrator (Screen Reader) Logic
-    useEffect(() => {
+    return () => {
+      document.documentElement.style.fontSize = ""
+      document.documentElement.style.removeProperty('--button-scale')
+    }
+  }, [accessibility.fontSizeIndex, accessibility.buttonSizeIndex])
+
+  // Narrator (Screen Reader) Logic
+  useEffect(() => {
     if (!accessibility.contentReader || typeof window === 'undefined' || !window.speechSynthesis) {
-       window.speechSynthesis?.cancel()
-       return
+      window.speechSynthesis?.cancel()
+      return
     }
     let speechTimeout: NodeJS.Timeout
     const handleMouseOver = (e: MouseEvent) => {
@@ -48,13 +48,13 @@ export function ClientLayout({ children }: { children: ReactNode }) {
       window.speechSynthesis.cancel()
       let textToRead = target.getAttribute('aria-label') || target.getAttribute('title') || target.innerText || target.textContent
       if (textToRead && textToRead.trim().length > 0) {
-         clearTimeout(speechTimeout)
-         speechTimeout = setTimeout(() => {
-            const cleanText = textToRead.trim().replace(/\s+/g, ' ').substring(0, 200)
-            const utterance = new SpeechSynthesisUtterance(cleanText)
-            utterance.lang = accessibility.language === "Español" ? "es-ES" : "en-US"
-            window.speechSynthesis.speak(utterance)
-         }, 400)
+        clearTimeout(speechTimeout)
+        speechTimeout = setTimeout(() => {
+          const cleanText = textToRead.trim().replace(/\s+/g, ' ').substring(0, 200)
+          const utterance = new SpeechSynthesisUtterance(cleanText)
+          utterance.lang = accessibility.language === "Español" ? "es-ES" : "en-US"
+          window.speechSynthesis.speak(utterance)
+        }, 400)
       }
     }
     document.addEventListener('mouseover', handleMouseOver)
@@ -86,7 +86,7 @@ export function ClientLayout({ children }: { children: ReactNode }) {
         }
         setTimeout(() => setLastAIResponse(""), 6000)
       }
-      
+
       const commands: Record<string, string[]> = {
         home: ['inicio', 'home', 'principal'],
         profile: ['perfil', 'cuenta', 'mis datos'],
@@ -128,7 +128,7 @@ export function ClientLayout({ children }: { children: ReactNode }) {
       const words = finalTranscript.split(/\s+/)
       const actWords = ['activa', 'activar', 'enciende', 'encender', 'pon', 'poner', 'habilita', 'habilitar']
       const deactWords = ['desactiva', 'desactivar', 'apaga', 'apagar', 'quita', 'quitar', 'deshabilita', 'deshabilitar']
-      
+
       const isActivating = words.some(w => actWords.includes(w))
       const isDeactivating = words.some(w => deactWords.includes(w))
 
@@ -140,7 +140,7 @@ export function ClientLayout({ children }: { children: ReactNode }) {
             if (isDeactivating && !isActivating) toggleState = false
             if (isDeactivating && isActivating) toggleState = false // Fallback
             if (isMotionSettings) toggleState = !toggleState // Invert for reduced motion
-            
+
             setAccessibility({ [prop]: toggleState })
             speak(`He ${toggleState ? 'activado' : 'desactivado'} la opción de ${key}.`)
             setLastTranscript("")
@@ -156,36 +156,36 @@ export function ClientLayout({ children }: { children: ReactNode }) {
       // Dictation Mode
       const inputWords = finalTranscript.split(' ')
       if (['escribe', 'pon', 'escribir', 'digita', 'di'].includes(inputWords[0])) {
-         let textToType = '', targetField = ''
-         const enIndex = inputWords.indexOf('en')
-         if (enIndex > 0) {
-            textToType = inputWords.slice(1, enIndex).join(' '); targetField = inputWords.slice(enIndex + 1).join(' ')
-         } else textToType = inputWords.slice(1).join(' ')
+        let textToType = '', targetField = ''
+        const enIndex = inputWords.indexOf('en')
+        if (enIndex > 0) {
+          textToType = inputWords.slice(1, enIndex).join(' '); targetField = inputWords.slice(enIndex + 1).join(' ')
+        } else textToType = inputWords.slice(1).join(' ')
 
-         if (targetField) {
-            interactiveElements.forEach((el: any) => {
-               if (el.tagName !== 'INPUT' && el.tagName !== 'TEXTAREA') return
-               const label = (el.placeholder || el.name || el.id || el.getAttribute('aria-label') || "").toLowerCase()
-               if (label.includes(targetField) || targetField.includes(label)) bestElementMatch = el
-            })
-         } else if (document.activeElement && (document.activeElement.tagName === 'INPUT' || document.activeElement.tagName === 'TEXTAREA')) {
-            bestElementMatch = document.activeElement
-         }
+        if (targetField) {
+          interactiveElements.forEach((el: any) => {
+            if (el.tagName !== 'INPUT' && el.tagName !== 'TEXTAREA') return
+            const label = (el.placeholder || el.name || el.id || el.getAttribute('aria-label') || "").toLowerCase()
+            if (label.includes(targetField) || targetField.includes(label)) bestElementMatch = el
+          })
+        } else if (document.activeElement && (document.activeElement.tagName === 'INPUT' || document.activeElement.tagName === 'TEXTAREA')) {
+          bestElementMatch = document.activeElement
+        }
 
-         if (bestElementMatch && textToType) {
-            bestElementMatch.focus()
-            const setter = Object.getOwnPropertyDescriptor(
-              bestElementMatch instanceof HTMLTextAreaElement ? window.HTMLTextAreaElement.prototype : window.HTMLInputElement.prototype, 'value'
-            )?.set
-            if (setter) {
-              setter.call(bestElementMatch, textToType)
-              bestElementMatch.dispatchEvent(new Event('input', { bubbles: true }))
-              bestElementMatch.dispatchEvent(new Event('change', { bubbles: true }))
-            } else bestElementMatch.value = textToType
-            speak(`¡Hecho! He escrito "${textToType}" para ti.`)
-            setLastTranscript("")
-            return
-         }
+        if (bestElementMatch && textToType) {
+          bestElementMatch.focus()
+          const setter = Object.getOwnPropertyDescriptor(
+            bestElementMatch instanceof HTMLTextAreaElement ? window.HTMLTextAreaElement.prototype : window.HTMLInputElement.prototype, 'value'
+          )?.set
+          if (setter) {
+            setter.call(bestElementMatch, textToType)
+            bestElementMatch.dispatchEvent(new Event('input', { bubbles: true }))
+            bestElementMatch.dispatchEvent(new Event('change', { bubbles: true }))
+          } else bestElementMatch.value = textToType
+          speak(`¡Hecho! He escrito "${textToType}" para ti.`)
+          setLastTranscript("")
+          return
+        }
       }
 
       // Screen Interaction Mode
@@ -237,17 +237,17 @@ export function ClientLayout({ children }: { children: ReactNode }) {
       if (finalTranscript) executeVoiceAI(finalTranscript)
     }
 
-    try { recognition.start(); setIsListening(true) } catch (e) {}
-    return () => { 
-      try { recognition.stop(); recognition.abort() } catch (e) {}
-      setIsListening(false) 
+    try { recognition.start(); setIsListening(true) } catch (e) { }
+    return () => {
+      try { recognition.stop(); recognition.abort() } catch (e) { }
+      setIsListening(false)
     }
   }, [accessibility.voiceNav, accessibility.language, router, setAccessibility])
 
   useEffect(() => {
     if (!accessibility.voiceNav) {
-       setLastTranscript(""); setLastAIResponse(""); setIsListening(false)
-       if (window.speechSynthesis) window.speechSynthesis.cancel()
+      setLastTranscript(""); setLastAIResponse(""); setIsListening(false)
+      if (window.speechSynthesis) window.speechSynthesis.cancel()
     }
   }, [accessibility.voiceNav])
 
@@ -256,8 +256,23 @@ export function ClientLayout({ children }: { children: ReactNode }) {
     if (!accessibility.keyboardOps) return
     const handleKeyDown = (e: KeyboardEvent) => {
       if (['INPUT', 'TEXTAREA'].includes((e.target as HTMLElement).tagName)) return
+
+      // Use Alt as the modifier
+      if (!e.altKey) return
+
       const key = e.key.toLowerCase()
-      const commands: Record<string, string> = { h: '/', p: '/profile', v: '/video', a: '/accessibility', f: '/forum', d: '/donations', q: '/quiz', l: '/login', s: '/signup' }
+      const commands: Record<string, string> = {
+        h: '/',
+        p: '/profile',
+        v: '/video',
+        a: '/accessibility',
+        f: '/forum',
+        d: '/donations',
+        q: '/quiz',
+        l: '/login',
+        s: '/signup'
+      }
+
       if (commands[key]) {
         e.preventDefault()
         router.push(commands[key])
@@ -276,7 +291,7 @@ export function ClientLayout({ children }: { children: ReactNode }) {
     let interval: NodeJS.Timeout
     let timeout: NodeJS.Timeout
     let currentTarget: HTMLElement | null = null
-    const DWELL_TIME = 1200 
+    const DWELL_TIME = 1200
     const handleMouseOver = (e: MouseEvent) => {
       if (Date.now() - lastDwellClick.current < 1500) return
       const target = (e.target as HTMLElement).closest('button, [role="button"], a, input, select') as HTMLElement
@@ -292,16 +307,16 @@ export function ClientLayout({ children }: { children: ReactNode }) {
         const elapsed = Date.now() - start
         setDwellProgress(Math.min((elapsed / DWELL_TIME) * 100, 100))
         if (currentTarget) {
-           const rect = currentTarget.getBoundingClientRect()
-           document.documentElement.style.setProperty('--dwell-magnet-x', `${rect.left + rect.width / 2}px`)
-           document.documentElement.style.setProperty('--dwell-magnet-y', `${rect.top + rect.height / 2}px`)
+          const rect = currentTarget.getBoundingClientRect()
+          document.documentElement.style.setProperty('--dwell-magnet-x', `${rect.left + rect.width / 2}px`)
+          document.documentElement.style.setProperty('--dwell-magnet-y', `${rect.top + rect.height / 2}px`)
         }
       }, 16)
       timeout = setTimeout(() => {
         if (currentTarget) {
-           currentTarget.click()
-           currentTarget.classList.remove('ring-4', 'ring-primary/40', 'ring-offset-2')
-           lastDwellClick.current = Date.now()
+          currentTarget.click()
+          currentTarget.classList.remove('ring-4', 'ring-primary/40', 'ring-offset-2')
+          lastDwellClick.current = Date.now()
         }
         setDwellProgress(0)
         clearInterval(interval)
@@ -329,107 +344,107 @@ export function ClientLayout({ children }: { children: ReactNode }) {
     }
   }, [accessibility.eyeControl])
 
-    const getColorBlindFilter = () => {
-        switch (accessibility.colorBlindMode) {
-            case "Protanopia": return "url(#protanopia)"
-            case "Protanomalia": return "url(#protanomalia)"
-            case "Deuteranopia": return "url(#deuteranopia)"
-            case "Deuteranomalia": return "url(#deuteranomalia)"
-            case "Tritanopia": return "url(#tritanopia)"
-            case "Tritanomalia": return "url(#tritanomalia)"
-            case "Acromatopsia": return "grayscale(100%)"
-            default: return "none"
-        }
+  const getColorBlindFilter = () => {
+    switch (accessibility.colorBlindMode) {
+      case "Protanopia": return "url(#protanopia)"
+      case "Protanomalia": return "url(#protanomalia)"
+      case "Deuteranopia": return "url(#deuteranopia)"
+      case "Deuteranomalia": return "url(#deuteranomalia)"
+      case "Tritanopia": return "url(#tritanopia)"
+      case "Tritanomalia": return "url(#tritanomalia)"
+      case "Acromatopsia": return "grayscale(100%)"
+      default: return "none"
     }
+  }
 
-    return (
-        <div
-            className={`min-h-screen bg-background flex flex-col transition-all duration-300 ${accessibility.highContrast ? "high-contrast" : ""} ${accessibility.keyboardOps ? "keyboard-ops" : ""}`}
-            style={{ filter: getColorBlindFilter() }}
-            onMouseMove={(e) => {
-              if (accessibility.readingGuide || accessibility.magnifier) {
-                document.documentElement.style.setProperty('--mouse-y', `${e.clientY}px`)
-                document.documentElement.style.setProperty('--mouse-x', `${e.clientX}px`)
-              }
-            }}
-        >
-            <Header />
-            <Sidebar />
-            <TutorialOverlay />
+  return (
+    <div
+      className={`min-h-screen bg-background flex flex-col transition-all duration-300 ${accessibility.highContrast ? "high-contrast" : ""} ${accessibility.keyboardOps ? "keyboard-ops" : ""}`}
+      style={{ filter: getColorBlindFilter() }}
+      onMouseMove={(e) => {
+        if (accessibility.readingGuide || accessibility.magnifier) {
+          document.documentElement.style.setProperty('--mouse-y', `${e.clientY}px`)
+          document.documentElement.style.setProperty('--mouse-x', `${e.clientX}px`)
+        }
+      }}
+    >
+      <Header />
+      <Sidebar />
+      <TutorialOverlay />
 
-            {accessibility.readingGuide && (
-              <div className="fixed left-0 right-0 h-8 bg-primary/20 backdrop-blur-[2px] pointer-events-none z-[100] border-y border-primary/30 mix-blend-multiply flex items-center justify-center"
-                style={{ top: 'var(--mouse-y, 0px)', transform: 'translateY(-50%)' }} >
-                <div className="w-full h-[2px] bg-primary/50" />
-              </div>
-            )}
-            
-            {accessibility.voiceNav && (
-              <div className="fixed bottom-8 left-1/2 -translate-x-1/2 z-[500] flex flex-col items-center gap-4 w-full max-w-xl px-6 pointer-events-none">
-                {lastAIResponse && (
-                  <div className="bg-[#19486a] dark:bg-primary-foreground border-4 border-white/20 p-8 rounded-[3rem] shadow-[0_30px_70px_rgba(0,0,0,0.4)] animate-in slide-in-from-bottom-8 fade-in zoom-in duration-700 w-full mb-4 relative overflow-hidden group">
-                     <div className="absolute top-0 left-0 w-2 h-full bg-primary animate-pulse" />
-                     <div className="flex items-center gap-4 mb-4">
-                        <div className="w-10 h-10 bg-white/10 rounded-2xl flex items-center justify-center animate-pulse"> <Mic className="text-primary-foreground dark:text-primary w-5 h-5" /> </div>
-                        <span className="text-[10px] font-black uppercase text-white/50 tracking-[0.4em]">AI Response</span>
-                     </div>
-                     <p className="text-xl md:text-2xl font-[900] tracking-tight text-white leading-tight"> {lastAIResponse} </p>
-                  </div>
-                )}
-                {lastTranscript && (
-                  <div className="bg-white/40 dark:bg-card/40 backdrop-blur-3xl border-2 border-primary/20 p-6 rounded-[2.5rem] shadow-[0_20px_50px_rgba(var(--primary-rgb),0.15)] animate-in slide-in-from-bottom-4 zoom-in-95 duration-500 w-full text-center group">
-                     <p className="text-xl md:text-2xl font-[1000] tracking-tight text-[#19486a] dark:text-foreground leading-tight italic"> "{lastTranscript}" </p>
-                     <div className="mt-4 flex items-end justify-center gap-1 h-4">
-                        {[1,2,3,4,5].map(i => (
-                          <div key={i} className="w-1 bg-primary/30 rounded-full animate-wave" style={{ animationDelay: `${i * 0.1}s`, height: `${30 + Math.random() * 70}%` }} />
-                        ))}
-                     </div>
-                  </div>
-                )}
-                <div className="relative group/ctrl pointer-events-auto">
-                   <div className={`px-8 py-4 rounded-full border-2 border-primary/20 shadow-2xl flex items-center gap-4 backdrop-blur-2xl transition-all duration-700 ${isListening ? 'bg-primary/90 text-white scale-110 shadow-primary/30' : 'bg-card/50 text-muted-foreground'}`}>
-                     <Mic className={`w-6 h-6 relative z-10 ${isListening ? 'animate-pulse scale-110' : 'opacity-40'}`} />
-                     <div className="flex flex-col items-start translate-y-[-1px]">
-                        <span className="text-[10px] font-black uppercase tracking-[0.3em] leading-none mb-0.5">{isListening ? 'Escuchando' : 'Pausado'}</span>
-                        <span className="text-[8px] font-bold opacity-60 uppercase tracking-widest">{accessibility.language} Mode</span>
-                     </div>
-                     <button onClick={() => setAccessibility({ voiceNav: false })} className="ml-4 p-2 bg-white/10 hover:bg-red-500 rounded-full border border-white/20 transition-all">
-                        <X className="w-4 h-4 text-white" />
-                     </button>
-                   </div>
-                </div>
-              </div>
-            )}
-
-            <main className={`flex-1 relative w-full pt-4 pb-20 transition-all duration-[400ms] ease-out ${accessibility.reducedMotion ? "[&_*]:!transition-none [&_*]:!animation-none" : ""}`}
-              style={accessibility.magnifier ? { transform: 'scale(1.35)', transformOrigin: 'var(--mouse-x, 50vw) var(--mouse-y, 50vh)' } : {}}
-            >
-                {children}
-            </main>
-
-            {/* Color Blindness SVG Filters (Simulated) */}
-            <svg className="hidden" aria-hidden="true">
-                <defs>
-                    <filter id="protanopia">
-                        <feColorMatrix type="matrix" values="0.567, 0.433, 0, 0, 0 0.558, 0.442, 0, 0, 0 0, 0.242, 0.758, 0, 0 0, 0, 0, 1, 0" />
-                    </filter>
-                    <filter id="protanomalia">
-                        <feColorMatrix type="matrix" values="0.817, 0.183, 0, 0, 0 0.333, 0.667, 0, 0, 0 0, 0.125, 0.875, 0, 0 0, 0, 0, 1, 0" />
-                    </filter>
-                    <filter id="deuteranopia">
-                        <feColorMatrix type="matrix" values="0.625, 0.375, 0, 0, 0 0.7, 0.3, 0, 0, 0 0, 0.3, 0.7, 0, 0 0, 0, 0, 1, 0" />
-                    </filter>
-                    <filter id="deuteranomalia">
-                        <feColorMatrix type="matrix" values="0.8, 0.2, 0, 0, 0 0.258, 0.742, 0, 0, 0 0, 0.142, 0.858, 0, 0 0, 0, 0, 1, 0" />
-                    </filter>
-                    <filter id="tritanopia">
-                        <feColorMatrix type="matrix" values="0.95, 0.05, 0, 0, 0 0, 0.433, 0.567, 0, 0 0, 0.475, 0.525, 0, 0 0, 0, 0, 1, 0" />
-                    </filter>
-                    <filter id="tritanomalia">
-                        <feColorMatrix type="matrix" values="0.967, 0.033, 0, 0, 0 0, 0.733, 0.267, 0, 0 0, 0.183, 0.817, 0, 0 0, 0, 0, 1, 0" />
-                    </filter>
-                </defs>
-            </svg>
+      {accessibility.readingGuide && (
+        <div className="fixed left-0 right-0 h-8 bg-primary/20 backdrop-blur-[2px] pointer-events-none z-[100] border-y border-primary/30 mix-blend-multiply flex items-center justify-center"
+          style={{ top: 'var(--mouse-y, 0px)', transform: 'translateY(-50%)' }} >
+          <div className="w-full h-[2px] bg-primary/50" />
         </div>
-    )
+      )}
+
+      {accessibility.voiceNav && (
+        <div className="fixed bottom-8 left-1/2 -translate-x-1/2 z-[500] flex flex-col items-center gap-4 w-full max-w-xl px-6 pointer-events-none">
+          {lastAIResponse && (
+            <div className="bg-[#19486a] dark:bg-primary-foreground border-4 border-white/20 p-8 rounded-[3rem] shadow-[0_30px_70px_rgba(0,0,0,0.4)] animate-in slide-in-from-bottom-8 fade-in zoom-in duration-700 w-full mb-4 relative overflow-hidden group">
+              <div className="absolute top-0 left-0 w-2 h-full bg-primary animate-pulse" />
+              <div className="flex items-center gap-4 mb-4">
+                <div className="w-10 h-10 bg-white/10 rounded-2xl flex items-center justify-center animate-pulse"> <Mic className="text-primary-foreground dark:text-primary w-5 h-5" /> </div>
+                <span className="text-[10px] font-black uppercase text-white/50 tracking-[0.4em]">AI Response</span>
+              </div>
+              <p className="text-xl md:text-2xl font-[900] tracking-tight text-white leading-tight"> {lastAIResponse} </p>
+            </div>
+          )}
+          {lastTranscript && (
+            <div className="bg-white/40 dark:bg-card/40 backdrop-blur-3xl border-2 border-primary/20 p-6 rounded-[2.5rem] shadow-[0_20px_50px_rgba(var(--primary-rgb),0.15)] animate-in slide-in-from-bottom-4 zoom-in-95 duration-500 w-full text-center group">
+              <p className="text-xl md:text-2xl font-[1000] tracking-tight text-[#19486a] dark:text-foreground leading-tight italic"> "{lastTranscript}" </p>
+              <div className="mt-4 flex items-end justify-center gap-1 h-4">
+                {[1, 2, 3, 4, 5].map(i => (
+                  <div key={i} className="w-1 bg-primary/30 rounded-full animate-wave" style={{ animationDelay: `${i * 0.1}s`, height: `${30 + Math.random() * 70}%` }} />
+                ))}
+              </div>
+            </div>
+          )}
+          <div className="relative group/ctrl pointer-events-auto">
+            <div className={`px-8 py-4 rounded-full border-2 border-primary/20 shadow-2xl flex items-center gap-4 backdrop-blur-2xl transition-all duration-700 ${isListening ? 'bg-primary/90 text-white scale-110 shadow-primary/30' : 'bg-card/50 text-muted-foreground'}`}>
+              <Mic className={`w-6 h-6 relative z-10 ${isListening ? 'animate-pulse scale-110' : 'opacity-40'}`} />
+              <div className="flex flex-col items-start translate-y-[-1px]">
+                <span className="text-[10px] font-black uppercase tracking-[0.3em] leading-none mb-0.5">{isListening ? 'Escuchando' : 'Pausado'}</span>
+                <span className="text-[8px] font-bold opacity-60 uppercase tracking-widest">{accessibility.language} Mode</span>
+              </div>
+              <button onClick={() => setAccessibility({ voiceNav: false })} className="ml-4 p-2 bg-white/10 hover:bg-red-500 rounded-full border border-white/20 transition-all">
+                <X className="w-4 h-4 text-white" />
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      <main className={`flex-1 relative w-full pt-4 pb-20 transition-all duration-[400ms] ease-out ${accessibility.reducedMotion ? "[&_*]:!transition-none [&_*]:!animation-none" : ""}`}
+        style={accessibility.magnifier ? { transform: 'scale(1.35)', transformOrigin: 'var(--mouse-x, 50vw) var(--mouse-y, 50vh)' } : {}}
+      >
+        {children}
+      </main>
+
+      {/* Color Blindness SVG Filters (Simulated) */}
+      <svg style={{ position: 'absolute', width: 0, height: 0, overflow: 'hidden' }} aria-hidden="true">
+        <defs>
+          <filter id="protanopia">
+            <feColorMatrix type="matrix" values="0.567, 0.433, 0, 0, 0 0.558, 0.442, 0, 0, 0 0, 0.242, 0.758, 0, 0 0, 0, 0, 1, 0" />
+          </filter>
+          <filter id="protanomalia">
+            <feColorMatrix type="matrix" values="0.817, 0.183, 0, 0, 0 0.333, 0.667, 0, 0, 0 0, 0.125, 0.875, 0, 0 0, 0, 0, 1, 0" />
+          </filter>
+          <filter id="deuteranopia">
+            <feColorMatrix type="matrix" values="0.625, 0.375, 0, 0, 0 0.7, 0.3, 0, 0, 0 0, 0.3, 0.7, 0, 0 0, 0, 0, 1, 0" />
+          </filter>
+          <filter id="deuteranomalia">
+            <feColorMatrix type="matrix" values="0.8, 0.2, 0, 0, 0 0.258, 0.742, 0, 0, 0 0, 0.142, 0.858, 0, 0 0, 0, 0, 1, 0" />
+          </filter>
+          <filter id="tritanopia">
+            <feColorMatrix type="matrix" values="0.95, 0.05, 0, 0, 0 0, 0.433, 0.567, 0, 0 0, 0.475, 0.525, 0, 0 0, 0, 0, 1, 0" />
+          </filter>
+          <filter id="tritanomalia">
+            <feColorMatrix type="matrix" values="0.967, 0.033, 0, 0, 0 0, 0.733, 0.267, 0, 0 0, 0.183, 0.817, 0, 0 0, 0, 0, 1, 0" />
+          </filter>
+        </defs>
+      </svg>
+    </div>
+  )
 }

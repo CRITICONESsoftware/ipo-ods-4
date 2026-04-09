@@ -43,6 +43,7 @@ export interface AccessibilitySettings {
   subtitles: boolean
   elementsLayout: string
   keyboardOps: boolean
+  virtualKeyboard: boolean
   eyeControl: boolean
   language: string
   buttonSizeIndex: number
@@ -74,7 +75,8 @@ const TRANSLATIONS = {
     subtitles: "Subtítulos",
     layout: "Disposición",
     voice: "Voz",
-    keyboard: "Teclado",
+    keyboard: "Atajos de teclado",
+    virtualKeyboard: "Teclado en pantalla",
     eyeControl: "Control ocular",
     language: "Idioma",
     level: "Nivel",
@@ -99,7 +101,8 @@ const TRANSLATIONS = {
     subtitles: "Subtitles",
     layout: "Layout",
     voice: "Voice",
-    keyboard: "Keyboard",
+    keyboard: "Keyboard Shortcuts",
+    virtualKeyboard: "On-screen Keyboard",
     eyeControl: "Eye Control",
     language: "Language",
     level: "Level",
@@ -148,10 +151,10 @@ const MOCK_USERS: User[] = [
 ]
 
 const INITIAL_NOTIFICATIONS: Notification[] = [
-  { 
-    id: "1", 
-    title: "¡Bienvenido!", 
-    content: "Comienza tu formación con el primer cuestionario de ODS 4.", 
+  {
+    id: "1",
+    title: "¡Bienvenido!",
+    content: "Comienza tu formación con el primer cuestionario de ODS 4.",
     href: "quiz" as Page,
     date: new Date().toISOString()
   }
@@ -172,7 +175,8 @@ const DEFAULT_ACCESSIBILITY: AccessibilitySettings = {
   hearingAids: false,
   subtitles: false,
   elementsLayout: "Standard",
-  keyboardOps: false,
+  keyboardOps: true,
+  virtualKeyboard: false,
   eyeControl: false,
   language: "Español",
   buttonSizeIndex: 1,
@@ -181,7 +185,7 @@ const DEFAULT_ACCESSIBILITY: AccessibilitySettings = {
 export function AppProvider({ children }: { children: ReactNode }) {
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const [tutorialStep, setTutorialStep] = useState(0)
-  const [showTutorial, setShowTutorial] = useState(true)
+  const [showTutorial, setShowTutorial] = useState(false)
   const [currentPage, setCurrentPage] = useState<Page>("tutorial")
   const [profileTab, setProfileTab] = useState<"info" | "notifications" | "progress">("info")
   const [user, setUserState] = useState<User | null>(null)
@@ -195,7 +199,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
   // Helper to load user-specific data
   const loadUserData = (userId: string | null) => {
     const suffix = userId ? `user_${userId}` : "guest"
-    
+
     console.log(`Loading data for scope: ${suffix}`)
 
     const savedQuizzes = localStorage.getItem(`ods_completed_quizzes_${suffix}`)
@@ -264,7 +268,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
             if (found) {
               setUserState(found)
               loadUserData(found.id)
-              return 
+              return
             }
           } else {
             localStorage.removeItem("ods_jwt_token")
@@ -275,7 +279,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
         localStorage.removeItem("ods_jwt_token")
       }
     }
-    
+
     loadUserData(null)
   }, [])
 
@@ -298,7 +302,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
   }, [currentPage, mounted, curId])
 
   useEffect(() => {
-    if (!mounted) return 
+    if (!mounted) return
     localStorage.setItem(`ods_show_tutorial_${curId}`, showTutorial.toString())
   }, [showTutorial, mounted, curId])
 
@@ -324,7 +328,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
       const payload = btoa(JSON.stringify({ id: found.id, name: found.name, role: found.role, exp: Date.now() + 86400000 }))
       const signature = btoa("mock_signature")
       const newToken = `${header}.${payload}.${signature}`
-      
+
       localStorage.setItem("ods_jwt_token", newToken)
       setToken(newToken)
       setUserState(found)
@@ -337,12 +341,12 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const signup = (userData: Omit<User, "id">) => {
     const newUser = { ...userData, id: Math.random().toString(36).substr(2, 9) }
     setAllUsers(prev => [...prev, newUser])
-    
+
     const header = btoa(JSON.stringify({ alg: "HS256", typ: "JWT" }))
     const payload = btoa(JSON.stringify({ id: newUser.id, name: newUser.name, role: newUser.role, exp: Date.now() + 86400000 }))
     const signature = btoa("mock_signature")
     const newToken = `${header}.${payload}.${signature}`
-    
+
     localStorage.setItem("ods_jwt_token", newToken)
     setToken(newToken)
     setUserState(newUser)

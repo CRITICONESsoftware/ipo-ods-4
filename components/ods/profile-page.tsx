@@ -3,6 +3,7 @@
 import { Bell, Pencil, LogIn, User as UserIcon, ShieldCheck, Mail, Calendar, Award, MessageCircle, ExternalLink } from "lucide-react"
 import { useApp } from "@/lib/app-context"
 import { QUIZZES } from "@/lib/quizzes"
+import { useRouter } from "next/navigation"
 
 const forumMessages = [
   {
@@ -14,6 +15,7 @@ const forumMessages = [
 
 export function ProfilePage() {
   const { profileTab, setProfileTab, user, setCurrentPage, notifications } = useApp()
+  const router = useRouter()
 
   if (!user) {
     return (
@@ -129,10 +131,9 @@ export function ProfilePage() {
                 
                 <div className="space-y-4">
                   {notifications.map((notif) => (
-                    <button 
+                    <div 
                       key={notif.id} 
-                      onClick={() => setCurrentPage(notif.href)}
-                      className="w-full !m-0 box-border text-left bg-[#fcc30b]/5 border-2 border-[#fcc30b]/20 p-6 rounded-3xl relative overflow-hidden group hover:border-[#fcc30b] transition-all active:scale-[0.99]"
+                      className="w-full !m-0 box-border text-left bg-[#fcc30b]/5 border-2 border-[#fcc30b]/20 p-6 rounded-3xl relative overflow-hidden group hover:border-[#fcc30b] transition-all"
                     >
                       <div className="absolute top-0 right-0 p-2 bg-[#fcc30b] text-primary rounded-bl-2xl">
                         <ShieldCheck size={14} />
@@ -141,11 +142,8 @@ export function ProfilePage() {
                         <h5 className="font-black text-lg text-[#a21942] uppercase tracking-tight">{notif.title}</h5>
                         <span className="text-[10px] font-black opacity-50">{new Date(notif.date).toLocaleDateString()}</span>
                       </div>
-                      <p className="text-foreground/80 font-bold mb-4">{notif.content}</p>
-                      <div className="flex items-center gap-2 text-[#a21942] font-black text-[10px] uppercase tracking-widest">
-                        Ir a la actividad <ExternalLink size={12} className="group-hover:translate-x-1 transition-transform" />
-                      </div>
-                    </button>
+                      <p className="text-foreground/80 font-bold mb-0">{notif.content}</p>
+                    </div>
                   ))}
 
                   {notifications.length === 0 && (

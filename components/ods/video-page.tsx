@@ -107,6 +107,153 @@ export function VideoPage() {
   const containerRef = useRef<HTMLDivElement>(null)
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null)
   const ytWrapperRef = useRef<HTMLDivElement>(null)
+  const [vttUrls, setVttUrls] = useState<Record<string, string>>({})
+  const videoRef = useRef<HTMLVideoElement>(null)
+  
+  useEffect(() => {
+    if (typeof window !== 'undefined' && window.location.protocol === 'file:') {
+      const vttEn = `WEBVTT
+
+00:00:00.480 --> 00:00:04.190 line:5%
+Are you familiar with the 2030 Agenda? In September
+
+00:00:04.200 --> 00:00:06.710 line:5%
+2015, the UN General Assembly
+
+00:00:06.720 --> 00:00:08.750 line:5%
+adopted the International Agenda for
+
+00:00:08.759 --> 00:00:11.330 line:5%
+Sustainable Development, an action plan
+
+00:00:11.339 --> 00:00:13.400 line:5%
+to achieve sustainable development
+
+00:00:13.409 --> 00:00:15.860 line:5%
+worldwide and realize
+
+00:00:15.869 --> 00:00:18.910 line:5%
+human rights without leaving anyone behind.
+
+00:00:18.920 --> 00:00:21.070 line:5%
+UN member states
+
+00:00:21.080 --> 00:00:23.110 line:5%
+committed to fulfilling the agenda by
+
+00:00:23.119 --> 00:00:25.480 line:5%
+2030.
+
+00:00:25.490 --> 00:00:29.650 line:5%
+This agenda contains 17 goals and 169
+
+00:00:29.660 --> 00:00:33.190 line:5%
+targets that, since 2016, have served as a guide for
+
+00:00:33.200 --> 00:00:35.920 line:5%
+countries to promote
+
+00:00:35.930 --> 00:00:37.840 line:5%
+social and economic development while
+
+00:00:37.850 --> 00:00:40.780 line:5%
+protecting the planet, ending
+
+00:00:40.790 --> 00:00:43.210 line:5%
+poverty and inequality, combating
+
+00:00:43.220 --> 00:00:45.670 line:5%
+climate change, building
+
+00:00:45.680 --> 00:00:48.270 line:5%
+peaceful, just, and inclusive societies,
+
+00:00:48.280 --> 00:00:50.920 line:5%
+and creating partnerships among all
+
+00:00:50.930 --> 00:00:53.410 line:5%
+people to achieve a better world together.`;
+
+      const vttEs = `WEBVTT
+
+00:00:00.480 --> 00:00:04.190 line:5%
+¿Conoces la Agenda 2030? En septiembre
+
+00:00:04.200 --> 00:00:06.710 line:5%
+de 2015, la Asamblea General de la ONU
+
+00:00:06.720 --> 00:00:08.750 line:5%
+aprobó la Agenda Internacional para
+
+00:00:08.759 --> 00:00:11.330 line:5%
+el Desarrollo Sostenible, un plan de acción
+
+00:00:11.339 --> 00:00:13.400 line:5%
+para lograr el desarrollo sostenible en
+
+00:00:13.409 --> 00:00:15.860 line:5%
+todo el mundo y hacer realidad los
+
+00:00:15.869 --> 00:00:18.910 line:5%
+derechos humanos sin dejar a nadie atrás.
+
+00:00:18.920 --> 00:00:21.070 line:5%
+Los estados miembros de la ONU
+
+00:00:21.080 --> 00:00:23.110 line:5%
+se comprometieron a cumplir la agenda para
+
+00:00:23.119 --> 00:00:25.480 line:5%
+2030.
+
+00:00:25.490 --> 00:00:29.650 line:5%
+Esta agenda contiene 17 objetivos y 169
+
+00:00:29.660 --> 00:00:33.190 line:5%
+metas que, desde 2016, han servido de
+
+00:00:33.200 --> 00:00:35.920 line:5%
+guía para que los países promuevan
+
+00:00:35.930 --> 00:00:37.840 line:5%
+el desarrollo social y económico al
+
+00:00:37.850 --> 00:00:40.780 line:5%
+tiempo que protegen el planeta, acaban
+
+00:00:40.790 --> 00:00:43.210 line:5%
+con la pobreza y la desigualdad, combaten
+
+00:00:43.220 --> 00:00:45.670 line:5%
+el cambio climático, construyen
+
+00:00:45.680 --> 00:00:48.270 line:5%
+sociedades pacíficas, justas e inclusivas,
+
+00:00:48.280 --> 00:00:50.920 line:5%
+y crean alianzas entre todas las
+
+00:00:50.930 --> 00:00:53.410 line:5%
+personas para lograr juntos un mundo mejor.`;
+
+      const blobEn = new Blob([vttEn], { type: 'text/vtt' });
+      const blobEs = new Blob([vttEs], { type: 'text/vtt' });
+      const urlEn = URL.createObjectURL(blobEn);
+      const urlEs = URL.createObjectURL(blobEs);
+      
+      setVttUrls({ en: urlEn, es: urlEs });
+      setAvailableTracks([
+        { uid: 'es', languageCode: 'es', displayName: 'Español', languageName: 'Español' },
+        { uid: 'en', languageCode: 'en', displayName: 'English', languageName: 'English' }
+      ]);
+      setCurrentTrack({ uid: 'es', languageCode: 'es', displayName: 'Español' });
+
+      return () => {
+        URL.revokeObjectURL(urlEn);
+        URL.revokeObjectURL(urlEs);
+      };
+    }
+  }, []);
 
   const formatTime = (seconds: number) => {
     const m = Math.floor(seconds / 60).toString().padStart(2, "0")
@@ -153,7 +300,8 @@ export function VideoPage() {
         rel: 0,
         controls: 0,
         disablekb: 1,
-        enablejsapi: 1
+        enablejsapi: 1,
+        origin: window.location.protocol === 'file:' ? 'http://localhost' : window.location.origin
       },
       events: {
         onReady: (event) => {
@@ -234,15 +382,27 @@ export function VideoPage() {
   }, [initPlayer, stopTimeTracking])
 
   useEffect(() => {
-    if (!playerRef.current) return
+    if (!playerRef.current && window.location.protocol !== 'file:') return
     const newState = accessibility.subtitles
     if (newState === captionsEnabledRef.current) return // No change needed
 
     setCaptionsEnabled(newState)
     captionsEnabledRef.current = newState
     
+    if (window.location.protocol === 'file:' && videoRef.current) {
+      const tracks = videoRef.current.textTracks
+      for (let i = 0; i < tracks.length; i++) {
+        if (tracks[i].language === currentTrack?.languageCode) {
+          tracks[i].mode = newState ? 'showing' : 'hidden'
+        } else {
+          tracks[i].mode = 'disabled'
+        }
+      }
+      return
+    }
+
     try {
-      if (newState) {
+      if (newState && playerRef.current) {
         playerRef.current.loadModule?.("captions")
         if (currentTrack?.languageCode === 'en') {
           playerRef.current.setOption?.("captions", "track", {
@@ -252,7 +412,7 @@ export function VideoPage() {
         } else {
           playerRef.current.setOption?.("captions", "track", { languageCode: currentTrack?.languageCode || 'es' });
         }
-      } else {
+      } else if (playerRef.current) {
         playerRef.current.unloadModule?.("captions")
       }
     } catch(e) {
@@ -261,6 +421,14 @@ export function VideoPage() {
   }, [accessibility.subtitles, currentTrack?.languageCode])
 
   const handlePlayPause = () => {
+    if (window.location.protocol === 'file:' && videoRef.current) {
+      if (videoRef.current.paused) {
+        videoRef.current.play()
+      } else {
+        videoRef.current.pause()
+      }
+      return
+    }
     if (!playerRef.current) return
     if (isPlaying) {
       playerRef.current.pauseVideo?.()
@@ -270,15 +438,26 @@ export function VideoPage() {
   }
 
   const handleProgressClick = (e: MouseEvent<HTMLDivElement>) => {
-    if (!progressRef.current || !playerRef.current || duration === 0) return
+    if (!progressRef.current || duration === 0) return
     const rect = progressRef.current.getBoundingClientRect()
     const percent = (e.clientX - rect.left) / rect.width
     const newTime = Math.max(0, Math.min(percent * duration, duration))
-    playerRef.current.seekTo?.(newTime, true)
+    
+    if (window.location.protocol === 'file:' && videoRef.current) {
+      videoRef.current.currentTime = newTime
+    } else if (playerRef.current) {
+      playerRef.current.seekTo?.(newTime, true)
+    }
     setCurrentTime(newTime)
   }
 
   const handleMuteToggle = () => {
+    if (window.location.protocol === 'file:' && videoRef.current) {
+      const targetMute = !isMuted
+      videoRef.current.muted = targetMute
+      setIsMuted(targetMute)
+      return
+    }
     if (!playerRef.current) return
     if (isMuted || volume === 0) {
       playerRef.current.unMute?.()
@@ -294,6 +473,11 @@ export function VideoPage() {
 
   const handleVolumeChange = (vol: number) => {
     setVolume(vol)
+    if (window.location.protocol === 'file:' && videoRef.current) {
+      videoRef.current.volume = vol / 100
+      setIsMuted(vol === 0)
+      return
+    }
     if (!playerRef.current) return
     playerRef.current.setVolume?.(vol)
     if (vol === 0) {
@@ -310,10 +494,24 @@ export function VideoPage() {
   }
 
   const handleCaptionsToggle = () => {
-    if (!playerRef.current) return
     const newState = !captionsEnabled
     setCaptionsEnabled(newState)
     captionsEnabledRef.current = newState
+
+    if (window.location.protocol === 'file:' && videoRef.current) {
+      const tracks = videoRef.current.textTracks
+      const lang = currentTrack?.languageCode || 'es'
+      for (let i = 0; i < tracks.length; i++) {
+        if (tracks[i].language === lang) {
+          tracks[i].mode = newState ? 'showing' : 'hidden'
+        } else {
+          tracks[i].mode = 'disabled'
+        }
+      }
+      return
+    }
+    
+    if (!playerRef.current) return
     
     try {
       if (newState) {
@@ -339,11 +537,23 @@ export function VideoPage() {
   }
 
   const handleTrackChange = (track: any) => {
-    if (!playerRef.current) return
-    
     setCurrentTrack(track)
     setCaptionsEnabled(true)
     captionsEnabledRef.current = true
+
+    if (window.location.protocol === 'file:' && videoRef.current) {
+      const tracks = videoRef.current.textTracks
+      for (let i = 0; i < tracks.length; i++) {
+        if (tracks[i].language === track.languageCode) {
+          tracks[i].mode = 'showing'
+        } else {
+          tracks[i].mode = 'disabled'
+        }
+      }
+      return
+    }
+    
+    if (!playerRef.current) return
     
     try {
       playerRef.current.loadModule?.("captions")
@@ -367,11 +577,18 @@ export function VideoPage() {
 
   const handleFontSizeChange = (size: number) => {
     setSelectedFontSize(size)
+    if (window.location.protocol === 'file:' && videoRef.current) {
+      // Direct styling for native video cues via CSS variable
+      const scale = size === 1 ? '70%' : size === 2 ? '100%' : size === 3 ? '130%' : '160%';
+      videoRef.current.style.setProperty('--cue-font-size', scale);
+      return
+    }
     if (!playerRef.current) return
     playerRef.current.setOption?.("captions", "fontSize", size)
   }
 
   const fetchTracks = useCallback(() => {
+    if (window.location.protocol === 'file:') return // Already set in useEffect
     if (!playerRef.current) return
     
     try {
@@ -436,209 +653,189 @@ export function VideoPage() {
 
   return (
     <main className="p-4 md:p-8 max-w-5xl mx-auto">
+      <style>{`
+        video::cue {
+          font-size: var(--cue-font-size, 100%);
+          background-color: rgba(0, 0, 0, 0.7);
+          color: white;
+          font-family: inherit;
+        }
+      `}</style>
       <div ref={containerRef} className="border-4 border-primary rounded-xl overflow-hidden bg-card shadow-lg flex flex-col">
-        {/* Video area */}
-        <div className="relative aspect-video bg-black w-full">
-          {/* YouTube player mount point wrapper */}
-          <div ref={ytWrapperRef} className="absolute inset-0 w-full h-full">
-            <div id="yt-player" className="absolute inset-0 w-full h-full" />
-          </div>
-
-          {/* ODS 4 badge - Moved to top-right to avoid overlapping YouTube's built-in title/controls */}
-          <div className="absolute top-4 right-4 bg-[#c5192d] rounded-lg p-2 shadow-md pointer-events-none z-10">
-            <span className="text-white font-bold text-lg block leading-none text-center">4</span>
-            <span className="text-white text-[8px] font-bold uppercase leading-tight block text-center mt-0.5">
-              Educacion<br />de Calidad
-            </span>
-          </div>
-
-          {/* ODS Logo in video */}
-          <div className="absolute top-4 left-4 text-white text-xs font-bold opacity-80 pointer-events-none z-10 flex flex-col drop-shadow-md">
-            <span>OBJETIVOS DE</span>
-            <span>DESARROLLO SOSTENIBLE</span>
-          </div>
-        </div>
-
-        {/* Video controls */}
-        <div className="bg-primary/95 px-4 py-3 shrink-0">
-          {/* SDG color strip */}
-          <div className="flex gap-0 mb-3 rounded-full overflow-hidden h-1.5 opacity-90">
-            {["#e5243b","#dda63a","#4c9f38","#c5192d","#ff3a21","#26bde2","#fcc30b","#a21942","#fd6925","#dd1367","#fd9d24","#bf8b2e","#3f7e44","#0a97d9","#56c02b","#00689d","#19486a"].map((color, i) => (
-              <div
-                key={i}
-                className="flex-1 h-full"
-                style={{ backgroundColor: color }}
-              />
-            ))}
-          </div>
-
-          {/* Progress bar */}
-          <div
-            ref={progressRef}
-            className="w-full h-2 bg-primary-foreground/20 rounded-full cursor-pointer mb-3 relative group"
-            onClick={handleProgressClick}
-          >
-            <div
-              className="absolute top-0 left-0 h-full bg-primary-foreground rounded-full transition-all group-hover:bg-accent"
-              style={{ width: duration > 0 ? `${(currentTime / duration) * 100}%` : "0%" }}
-            />
-          </div>
-
-          <div className="flex items-center justify-between">
-            <button
-              onClick={handlePlayPause}
-              className="text-primary-foreground hover:scale-110 active:scale-95 transition-all p-1"
-              aria-label={isPlaying ? "Pausar" : "Reproducir"}
-            >
-              {isPlaying ? <Pause className="w-6 h-6 fill-current" /> : <Play className="w-6 h-6 fill-current" />}
-            </button>
-
-            <div className="flex items-center gap-4">
-              <span className="text-primary-foreground text-sm font-mono opacity-90 hidden sm:block">
-                {formatTime(currentTime)} / {formatTime(duration)}
-              </span>
-              {/* Volume control */}
-              <div className="flex items-center gap-2 group/vol">
-                <button
-                  onClick={handleMuteToggle}
-                  className="text-primary-foreground hover:scale-110 transition-transform p-1"
-                  aria-label={(isMuted || volume === 0) ? "Activar sonido" : "Silenciar"}
-                >
-                  {isMuted || volume === 0
-                    ? <VolumeX className="w-5 h-5" />
-                    : <Volume2 className="w-5 h-5" />}
-                </button>
-                <div className="w-16 sm:w-24 flex items-center h-full">
-                  <Slider
-                    value={[isMuted ? 0 : volume]}
-                    min={0}
-                    max={100}
-                    step={1}
-                    onValueChange={(vals) => handleVolumeChange(vals[0])}
-                    className="cursor-pointer [&_[data-slot=slider-track]]:bg-white/75 [&_[data-slot=slider-range]]:bg-white/75 [&_[data-slot=slider-thumb]]:bg-white [&_[data-slot=slider-thumb]]:border-white"
-                  />
-                </div>
-              </div>
-              <div className="flex items-center gap-1 group/captions relative">
-                <button
-                  onClick={handleCaptionsToggle}
-                  className={`transition-all p-1 hover:scale-110 ${captionsEnabled ? "text-primary-foreground" : "text-primary-foreground/40"}`}
-                  aria-label={captionsEnabled ? "Desactivar subtítulos" : "Activar subtítulos"}
-                >
-                  <Captions className="w-5 h-5" />
-                </button>
-                <button 
-                  onClick={() => setShowSettings(!showSettings)}
-                  className="text-primary-foreground/30 hover:text-primary-foreground transition-all p-1"
-                >
-                  <Settings className={`w-3.5 h-3.5 transition-transform duration-500 ${showSettings ? 'rotate-90' : ''}`} />
-                </button>
-                
-                {showSettings && (
-                  <div className="fixed top-1/2 left-1/2 z-50 w-[min(24rem,calc(100vw-1rem))] max-h-[85vh] -translate-x-1/2 -translate-y-1/2 overflow-hidden bg-card border-2 border-primary rounded-2xl shadow-2xl p-4 text-foreground animate-in fade-in zoom-in-95 duration-200 [--button-scale:1]">
-                    <div className="flex items-center justify-between mb-3 pb-3 border-b border-border/70">
-                      <div className="flex flex-col">
-                        <h3 className="font-black text-xs uppercase tracking-widest">Personalizar Subtítulos</h3>
-                        <p className="text-[9px] text-muted-foreground font-bold">AJUSTES LOCALES DEL VÍDEO</p>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <button 
-                          onClick={fetchTracks}
-                          className="p-1.5 hover:bg-muted rounded-full transition-colors text-muted-foreground hover:text-primary"
-                          title="Actualizar idiomas"
-                        >
-                        </button>
-                        <button onClick={() => setShowSettings(false)} className="text-muted-foreground hover:text-foreground p-1">
-                          <X className="w-5 h-5" />
-                        </button>
-                      </div>
-                    </div>
-
-                    <div className="flex gap-2 mb-4 bg-muted p-1 rounded-xl">
-                      <button 
-                        onClick={() => setSettingsTab('tracks')}
-                        className={`min-w-0 flex-1 py-2 rounded-lg text-[10px] font-black uppercase transition-all ${settingsTab === 'tracks' ? 'bg-primary text-white shadow-md' : 'hover:bg-card'}`}
-                      >
-                        Idiomas
-                      </button>
-                      <button 
-                        onClick={() => setSettingsTab('size')}
-                        className={`min-w-0 flex-1 py-2 rounded-lg text-[10px] font-black uppercase transition-all ${settingsTab === 'size' ? 'bg-primary text-white shadow-md' : 'hover:bg-card'}`}
-                      >
-                        Tamaño
-                      </button>
-                    </div>
-
-                    <div className="max-h-[50vh] overflow-y-auto overflow-x-hidden space-y-1 pr-1 thin-scrollbar mb-3">
-                      {settingsTab === 'tracks' ? (
-                        availableTracks.length > 0 ? (
-                          availableTracks.map((track, i) => (
-                            <button
-                              key={track.uid || i}
-                              onClick={() => handleTrackChange(track)}
-                              className={`w-full text-left px-3.5 py-2.5 rounded-xl text-sm font-extrabold transition-all flex items-center justify-between gap-2 ${currentTrack?.uid === track.uid ? 'bg-primary/10 text-primary ring-1 ring-primary/40' : 'hover:bg-muted'}`}
-                            >
-                              <span className="truncate">{track.displayName}</span>
-                              {currentTrack?.uid === track.uid && (
-                                <div className="flex items-center gap-1.5 shrink-0">
-                                  <div className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
-                                  <span className="text-[8px] font-black">ACTIVO</span>
-                                </div>
-                              )}
-                            </button>
-                          ))
-                        ) : (
-                          <p className="text-[10px] text-muted-foreground text-center py-6 italic font-medium">Buscando pistas disponibles...</p>
-                        )
-                      ) : (
-                        <div className="grid grid-cols-2 gap-2 py-1">
-                          {[
-                            { label: 'Pequeño', val: 0 },
-                            { label: 'Normal', val: 1 },
-                            { label: 'Grande', val: 2 },
-                            { label: 'Extra', val: 3 },
-                          ].map((s) => (
-                            <button
-                              key={s.val}
-                              onClick={() => handleFontSizeChange(s.val)}
-                              className={`px-3 py-3 rounded-xl border-2 text-[10px] font-black uppercase tracking-tight transition-all ${selectedFontSize === s.val ? 'border-primary bg-primary/10 text-primary ring-1 ring-primary/30' : 'border-border hover:border-primary hover:bg-primary/5'}`}
-                            >
-                              {s.label}
-                            </button>
-                          ))}
-                        </div>
-                      )}
-                    </div>
-
-                    <div className="pt-3 border-t border-border/70 flex flex-col gap-2">
-                      <button 
-                        onClick={() => {
-                          setAccessibility({ subtitles: captionsEnabled });
-                          setShowSettings(false);
-                          toast.success("Ajustes guardados en tu perfil de accesibilidad");
-                        }}
-                        className="w-full py-2.5 bg-primary text-white rounded-xl text-[10px] font-black uppercase tracking-wide shadow-lg shadow-primary/30 active:scale-95 transition-all"
-                      >
-                        Guardar como predeterminado
-                      </button>
-                      <p className="text-[8px] text-center text-muted-foreground font-bold italic">
-                        * Esto actualizará tu configuración global
-                      </p>
-                    </div>
-                  </div>
-                )}
-              </div>
-              <button
-                onClick={handleFullscreen}
-                className="text-primary-foreground hover:scale-110 transition-transform p-1 ml-1"
-                aria-label="Pantalla completa"
+          {/* Video area */}
+          <div className="relative aspect-video bg-black w-full group">
+            {typeof window !== 'undefined' && window.location.protocol === 'file:' ? (
+              <video 
+                ref={videoRef}
+                className="absolute inset-0 w-full h-full bg-black cursor-pointer"
+                src="./videoplayback.mp4"
+                onPlay={() => setIsPlaying(true)}
+                onPause={() => setIsPlaying(false)}
+                onTimeUpdate={() => setCurrentTime(videoRef.current?.currentTime || 0)}
+                onLoadedMetadata={() => {
+                   setDuration(videoRef.current?.duration || 0);
+                   // Set initial state of track
+                   const tracks = videoRef.current?.textTracks
+                   if (tracks) {
+                     for (let i = 0; i < tracks.length; i++) {
+                       if (tracks[i].language === (currentTrack?.languageCode || 'es')) {
+                         tracks[i].mode = captionsEnabled ? 'showing' : 'hidden';
+                       } else {
+                         tracks[i].mode = 'disabled';
+                       }
+                     }
+                   }
+                }}
+                onClick={handlePlayPause}
               >
-                <Maximize2 className="w-5 h-5" />
-              </button>
+                <track 
+                  kind="subtitles" 
+                  src={vttUrls.es} 
+                  srcLang="es" 
+                  label="Español" 
+                  default={currentTrack?.languageCode === 'es'} 
+                />
+                <track 
+                  kind="subtitles" 
+                  src={vttUrls.en} 
+                  srcLang="en" 
+                  label="English" 
+                  default={currentTrack?.languageCode === 'en'} 
+                />
+                Tu navegador no soporta el formato de vídeo.
+              </video>
+            ) : (
+              /* YouTube player mount point wrapper */
+              <div ref={ytWrapperRef} className="absolute inset-0 w-full h-full">
+                <div id="yt-player" className="absolute inset-0 w-full h-full" />
+              </div>
+            )}
+
+            {/* ODS 4 badge */}
+            <div className="absolute top-4 right-4 bg-[#c5192d] rounded-lg p-2 shadow-md pointer-events-none z-10">
+              <span className="text-white font-bold text-lg block leading-none text-center">4</span>
+              <span className="text-white text-[8px] font-bold uppercase leading-tight block text-center mt-0.5">
+                Educacion<br />de Calidad
+              </span>
+            </div>
+
+            {/* ODS Logo in video */}
+            <div className="absolute top-4 left-4 text-white text-xs font-bold opacity-80 pointer-events-none z-10 flex flex-col drop-shadow-md">
+              <span>OBJETIVOS DE</span>
+              <span>DESARROLLO SOSTENIBLE</span>
             </div>
           </div>
-        </div>
+
+          {/* Video controls (SHARED) */}
+          <div className="bg-primary/95 px-4 py-3 shrink-0">
+            <div className="flex gap-0 mb-3 rounded-full overflow-hidden h-1.5 opacity-90">
+              {["#e5243b","#dda63a","#4c9f38","#c5192d","#ff3a21","#26bde2","#fcc30b","#a21942","#fd6925","#dd1367","#fd9d24","#bf8b2e","#3f7e44","#0a97d9","#56c02b","#00689d","#19486a"].map((color, i) => (
+                <div key={i} className="flex-1 h-full" style={{ backgroundColor: color }} />
+              ))}
+            </div>
+
+            <div ref={progressRef} className="w-full h-2 bg-primary-foreground/20 rounded-full cursor-pointer mb-3 relative group" onClick={handleProgressClick}>
+              <div className="absolute top-0 left-0 h-full bg-primary-foreground rounded-full transition-all group-hover:bg-accent" style={{ width: duration > 0 ? `${(currentTime / duration) * 100}%` : "0%" }} />
+            </div>
+
+            <div className="flex items-center justify-between">
+              <button onClick={handlePlayPause} className="text-primary-foreground hover:scale-110 active:scale-95 transition-all p-1">
+                {isPlaying ? <Pause className="w-6 h-6 fill-current" /> : <Play className="w-6 h-6 fill-current" />}
+              </button>
+
+              <div className="flex items-center gap-4">
+                <span className="text-primary-foreground text-sm font-mono opacity-90 hidden sm:block">{formatTime(currentTime)} / {formatTime(duration)}</span>
+                <div className="flex items-center gap-2 group/vol">
+                  <button onClick={handleMuteToggle} className="text-primary-foreground hover:scale-110 transition-transform p-1">
+                    {isMuted || volume === 0 ? <VolumeX className="w-5 h-5" /> : <Volume2 className="w-5 h-5" />}
+                  </button>
+                  <div className="w-16 sm:w-24 flex items-center h-full">
+                    <Slider value={[isMuted ? 0 : volume]} min={0} max={100} step={1} onValueChange={(vals) => handleVolumeChange(vals[0])} className="cursor-pointer [&_[data-slot=slider-track]]:bg-white/75 [&_[data-slot=slider-range]]:bg-white/75 [&_[data-slot=slider-thumb]]:bg-white" />
+                  </div>
+                </div>
+                <div className="flex items-center gap-1 group/captions relative">
+                  <button onClick={handleCaptionsToggle} className={`transition-all p-1 hover:scale-110 ${captionsEnabled ? "text-primary-foreground" : "text-primary-foreground/40"}`}>
+                    <Captions className="w-5 h-5" />
+                  </button>
+                  <button onClick={() => setShowSettings(!showSettings)} className={`text-primary-foreground/30 hover:text-primary-foreground transition-all p-1`}>
+                    <Settings className={`w-3.5 h-3.5 transition-transform duration-500 ${showSettings ? 'rotate-90' : ''}`} />
+                  </button>
+                  {showSettings && (
+                    <div className="fixed top-1/2 left-1/2 z-50 w-[min(24rem,calc(100vw-1rem))] max-h-[85vh] -translate-x-1/2 -translate-y-1/2 overflow-hidden bg-card border-2 border-primary rounded-2xl shadow-2xl p-4 text-foreground animate-in fade-in zoom-in-95 duration-200">
+                      <div className="flex items-center justify-between mb-3 pb-3 border-b border-border/70">
+                        <h3 className="font-black text-xs uppercase">Ajustes de Subtítulos</h3>
+                        <button onClick={() => setShowSettings(false)}><X className="w-5 h-5" /></button>
+                      </div>
+                      
+                      <div className="space-y-4 mb-2 overflow-y-auto max-h-[60vh] pr-1 custom-scrollbar">
+                        <div className="space-y-3">
+                          <label className="text-[10px] font-black uppercase text-muted-foreground tracking-widest">Idioma de los subtítulos</label>
+                          <div className="grid grid-cols-1 gap-2">
+                            {availableTracks.length > 0 ? (
+                              availableTracks.map((track) => (
+                                <button
+                                  key={track.uid}
+                                  onClick={() => handleTrackChange(track)}
+                                  className={`flex items-center justify-between px-4 py-3 rounded-xl transition-all border-2 ${
+                                    currentTrack?.uid === track.uid 
+                                      ? "bg-primary/10 border-primary text-primary font-bold shadow-sm" 
+                                      : "bg-muted/50 border-transparent hover:bg-muted text-foreground/70"
+                                  }`}
+                                >
+                                  <span className="text-xs uppercase tracking-tight">{track.displayName || track.languageName}</span>
+                                  {currentTrack?.uid === track.uid && (
+                                    <div className="w-2 h-2 rounded-full bg-primary" />
+                                  )}
+                                </button>
+                              ))
+                            ) : (
+                              <p className="text-[10px] text-muted-foreground italic text-center py-2">No hay pistas disponibles</p>
+                            )}
+                          </div>
+                        </div>
+
+                        <div className="space-y-3">
+                          <label className="text-[10px] font-black uppercase text-muted-foreground tracking-widest">Tamaño de los subtítulos</label>
+                          <div className="flex gap-2 p-1 bg-muted rounded-xl">
+                            {[1, 2, 3, 4].map((size) => (
+                              <button
+                                key={size}
+                                onClick={() => handleFontSizeChange(size)}
+                                className={`flex-1 flex flex-col items-center justify-center py-3 rounded-lg transition-all ${
+                                  selectedFontSize === size 
+                                    ? "bg-primary text-primary-foreground shadow-sm" 
+                                    : "hover:bg-background/80 text-muted-foreground"
+                                }`}
+                              >
+                                <span className="font-bold" style={{ fontSize: `${10 + size * 4}px` }}>A</span>
+                                <span className="text-[9px] mt-1 font-bold uppercase">{size === 1 ? 'S' : size === 2 ? 'M' : size === 3 ? 'L' : 'XL'}</span>
+                              </button>
+                            ))}
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="mt-4 text-center">
+                        <p className="text-[9px] text-muted-foreground italic mb-4">Los cambios se aplican automáticamente</p>
+                        <button 
+                          onClick={() => { 
+                            setAccessibility({ subtitles: captionsEnabled }); 
+                            setShowSettings(false); 
+                          }} 
+                          className="w-full py-3 bg-primary text-primary-foreground hover:bg-primary/90 rounded-xl text-[10px] font-black uppercase transition-colors shadow-lg shadow-primary/20"
+                        >
+                          Confirmar y Cerrar
+                        </button>
+                      </div>
+                    </div>
+                  )}
+                </div>
+                <button onClick={handleFullscreen} className="text-primary-foreground hover:scale-110 transition-transform p-1 ml-1"><Maximize2 className="w-5 h-5" /></button>
+              </div>
+            </div>
+          </div>
       </div>
     </main>
   )
 }
+

@@ -24,7 +24,7 @@ export function Header() {
         <div className="flex items-center gap-2 cursor-pointer group" onClick={() => router.push("/")}>
           <div className="w-9 h-9 rounded-xl bg-white flex items-center justify-center shadow-lg transform group-hover:rotate-6 transition-transform">
             <img
-              src="/icon.webp"
+              src="./icon.webp"
               alt="ODS Logo"
               className="w-7 h-7 object-contain"
             />

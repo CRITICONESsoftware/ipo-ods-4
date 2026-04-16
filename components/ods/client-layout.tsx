@@ -8,6 +8,7 @@ import { Sidebar } from "./sidebar"
 import { TutorialOverlay } from "./tutorial-overlay"
 import { fontSizes } from "./accessibility-page"
 import { Mic, X } from "lucide-react"
+import { toast } from "sonner"
 
 export function ClientLayout({ children }: { children: ReactNode }) {
   const { accessibility, setAccessibility } = useApp()
@@ -237,7 +238,16 @@ export function ClientLayout({ children }: { children: ReactNode }) {
       if (finalTranscript) executeVoiceAI(finalTranscript)
     }
 
-    try { recognition.start(); setIsListening(true) } catch (e) { }
+    try { 
+      recognition.start(); 
+      setIsListening(true) 
+    } catch (e) { 
+      // Fallback for file:/// protocol where SpeechRecognition is often disabled
+      if (window.location.protocol === 'file:') {
+        console.warn("SpeechRecognition disabled on file protocol. Enabling simulation mode.");
+        setIsListening(true);
+      }
+    }
     return () => {
       try { recognition.stop(); recognition.abort() } catch (e) { }
       setIsListening(false)
@@ -257,10 +267,14 @@ export function ClientLayout({ children }: { children: ReactNode }) {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (['INPUT', 'TEXTAREA'].includes((e.target as HTMLElement).tagName)) return
 
-      // Use Alt as the modifier
-      if (!e.altKey) return
+      // Support Alt (Windows) / Option (Mac) OR Ctrl+Shift as a robust fallback
+      const isMod = e.altKey || (e.ctrlKey && e.shiftKey);
+      if (!isMod) return
 
-      const key = e.key.toLowerCase()
+      // Use e.code for Option/Alt on Mac because it avoids special character conversion
+      const code = e.code.replace('Key', '').toLowerCase();
+      const key = e.key.toLowerCase();
+      
       const commands: Record<string, string> = {
         h: '/',
         p: '/profile',
@@ -273,9 +287,18 @@ export function ClientLayout({ children }: { children: ReactNode }) {
         s: '/signup'
       }
 
-      if (commands[key]) {
+      const targetPath = commands[code] || commands[key];
+
+      if (targetPath) {
         e.preventDefault()
-        router.push(commands[key])
+        router.push(targetPath)
+        
+        // Visual feedback
+        const pageName = targetPath === '/' ? 'Inicio' : targetPath.substring(1);
+        toast.success(`Navegando a ${pageName}`, {
+          description: `Acceso rápido detectado (${e.altKey ? (window.navigator.platform.includes('Mac') ? 'Option' : 'Alt') : 'Ctrl+Shift'} + ${code.toUpperCase()})`,
+          duration: 1500
+        });
       }
     }
     window.addEventListener('keydown', handleKeyDown)
@@ -401,12 +424,44 @@ export function ClientLayout({ children }: { children: ReactNode }) {
               </div>
             </div>
           )}
-          <div className="relative group/ctrl pointer-events-auto">
+          <div className="relative group/ctrl pointer-events-auto flex flex-col items-center gap-4">
+            {isListening && window.location.protocol === 'file:' && (
+              <div className="bg-card/80 backdrop-blur-xl p-3 rounded-2xl border-2 border-primary/30 shadow-xl pointer-events-auto animate-in fade-in zoom-in">
+                <p className="text-[9px] font-black uppercase text-primary mb-2 text-center">Modo Simulación (Sin Servidor)</p>
+                <input 
+                  type="text"
+                  placeholder="Escribe un comando (ej: inicio, perfil, foro)..."
+                  className="bg-background border-2 border-primary/20 rounded-xl px-4 py-2 text-xs font-bold w-64 focus:border-primary outline-none transition-all"
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      const val = (e.target as HTMLInputElement).value;
+                      setLastTranscript(val);
+                      (e.target as any)._executeVoiceAI = (transcript: string) => {
+                        // We need a way to trigger the inner function, but since it's inside the effect, 
+                        // we'll just implement a simple redirect here for the simulation link.
+                        const cmd = transcript.toLowerCase();
+                        if (cmd.includes('inicio')) router.push('/');
+                        else if (cmd.includes('perfil')) router.push('/profile');
+                        else if (cmd.includes('foro')) router.push('/forum');
+                        else if (cmd.includes('video')) router.push('/video');
+                        else if (cmd.includes('quiz')) router.push('/quiz');
+                        else if (cmd.includes('acces')) router.push('/accessibility');
+                        else if (cmd.includes('donar')) router.push('/donations');
+                        else if (cmd.includes('login')) router.push('/login');
+                        else if (cmd.includes('regis')) router.push('/signup');
+                      };
+                      (e.target as any)._executeVoiceAI(val);
+                      (e.target as HTMLInputElement).value = '';
+                    }
+                  }}
+                />
+              </div>
+            )}
             <div className={`px-8 py-4 rounded-full border-2 border-primary/20 shadow-2xl flex items-center gap-4 backdrop-blur-2xl transition-all duration-700 ${isListening ? 'bg-primary/90 text-white scale-110 shadow-primary/30' : 'bg-card/50 text-muted-foreground'}`}>
               <Mic className={`w-6 h-6 relative z-10 ${isListening ? 'animate-pulse scale-110' : 'opacity-40'}`} />
               <div className="flex flex-col items-start translate-y-[-1px]">
                 <span className="text-[10px] font-black uppercase tracking-[0.3em] leading-none mb-0.5">{isListening ? 'Escuchando' : 'Pausado'}</span>
-                <span className="text-[8px] font-bold opacity-60 uppercase tracking-widest">{accessibility.language} Mode</span>
+                <span className="text-[8px] font-bold opacity-60 uppercase tracking-widest">{window.location.protocol === 'file:' ? 'Simulated Mode' : `${accessibility.language} Mode`}</span>
               </div>
               <button onClick={() => setAccessibility({ voiceNav: false })} className="ml-4 p-2 bg-white/10 hover:bg-red-500 rounded-full border border-white/20 transition-all">
                 <X className="w-4 h-4 text-white" />

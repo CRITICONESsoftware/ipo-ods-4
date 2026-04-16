@@ -62,7 +62,7 @@ export function HomePage() {
 
         <div className="flex-shrink-0 w-full md:w-48">
           <img
-            src="/ods4.jpg"
+            src="./ods4.jpg"
             alt="ODS 4: Educación de Calidad"
             className="w-full rounded-lg shadow-md border border-border"
           />

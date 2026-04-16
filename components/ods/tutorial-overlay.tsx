@@ -6,23 +6,23 @@ import { useApp } from "@/lib/app-context"
 const tutorialSteps = [
   {
     text: "Para acceder al menu y ver el resto de opciones, pulse en el icono de la esquina superior izquierda",
-    image: "/tutorial1.png",
+    image: "./tutorial1.png",
   },
   {
     text: "Personaliza tu experiencia: Activa la Lupa, el Narrador o filtros de color desde el panel de Accesibilidad",
-    image: "/tutorial2.png",
+    image: "./tutorial2.png",
   },
   {
     text: "¡Habla con la web! Activa el Control por Voz para navegar diciendo 'Inicio', 'Vídeo' o 'Perfil'",
-    image: "/tutorial3.png",
+    image: "./tutorial3.png",
   },
   {
     text: "Atajos Rápidos (pulsando ALT): Alt+H (Inicio), Alt+P (Perfil), Alt+V (Vídeo), Alt+A (Ajustes), Alt+F (Foro), Alt+D (Donar), Alt+Q (Quiz), Alt+L (Login), Alt+S (Registro)",
-    image: "/tutorial4.png",
+    image: "./tutorial4.png",
   },
   {
     text: "Para alternar entre modo claro y modo oscuro, pulse el boton de la esquina superior derecha",
-    image: "/tutorial5.png",
+    image: "./tutorial5.png",
   },
 ]
 
